@@ -251,126 +251,350 @@ tr:nth-child(even) {
   <div class="container">
     
   
-<h3>Scripting Elements  </h3>
-<p>There are 2 types of Scripting elements<br> <br>
-1. Traditional Scripting elements <br>1. Expressions <br>2. Scriptlets <br>3. Declarative <br>4. Comments <br><br>2. Modern Scripting elements <br>1. EL <br>2. JSTL </p>
 
-<h4>Expressions :(<%= %>) </h4>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">isELIgnored</span></div>
 
-<p>Expression can be used to print java expression to the jsp.</p>
- <p  style="font-weight:bold;color:#212121">Example:
-    </p> <p><%= 2+3 %>   (OR)  out.print(2+3); 
+<p>Expression Language introduced in jsp 1.2v <br>The main objective of EL is to eliminate java code from jsp<br>
+<b><%= request.getParameter("user") %> <br>Or<br> ${param.user} </b><br>
+we can use isELIgnored attribute to enable or disable in our Jsp. <br><b>isELIgnored="true"</b> <br><br>
  
-<br><br>Expression will become argument to out.print( ) present in _jspService( ) 
-<br>Inside jsp expression , expression value should not ends with semicolon otherwise we will get http status 500 error.  </p>
- <p  style="font-weight:bold;color:#212121">Example:
-    </p>
-	<p><b> <%= newDate( ); %>  (OR)  out.print(new Date( ) ; );</b>   // 500  status code <br><br>
-Inside expressions we can take method calls also but void return type method calls are not allowed. 
-<br><%= math.random( ) %>       //valid <br><%=(new AL( ) ).clear( ) %>   // invalid     
-<br>because  void return type methods  are not allowed 
-<br><br>Inside expression space is not allowed between % and = , otherwise it will be treated as scriptlet which causes compile time error . <br><%  =20 %>
-<br> _jspService() { <br>=20 ;   // invalid statememt <br>}   <br><br>Declarations are not allowed in expressions i.e., declaring variables,methods etc.,
-<br><%= String s="awwal" %>  OR <br><br>
+EL syntax just treated as template text without any processing<br><br> 
  
-out.println(String s="awwal");   //invalid   </p>
-	
-	
-	
-	 <p  style="font-weight:bold;color:#212121">Which of the following Expressions are valid ? 
-    </p>
-<p>1. <%= 2*3 %> //valid <br>2. <%= 2<3 %> //valid <br>3. <%= math.sqrt(4) %> //valid <br>4. <%= 2*3 ; %> //invalid <br>5. <%= new Student( ) %>         // sop(new Student( ) ); //valid </p>	
-	
-	<h3>Scriptlet : (<% %>) </h3>
-<p>1. We can use scriptlet to place java code in the jsp <br>
-<%  any  java code %> // this java code in _jspService() <br><br>
-2. Scriptlet code will be placed directly inside _jspService( ) of generated servlet. <br>3. Every java statement present inside scriptlet should ends with semicolon(;). </p>	
-	
- <p  style="font-weight:bold;color:#212121">Write Jsp to print hit count : 
-    </p>	
-	
- <pre ><code class="language-java"><%           
- int count = 0;           
- count++;          //every request count initialized to 0 and print 1           
- out.println(count); 
- %> 
- </code></pre>	
-<p>This Jsp is invalid and generates '1' as response every time, here count variable is local. </p>	
-	
-	 <pre ><code class="language-java"><%!          
-int  count = 0 ; 
-%> 
- 
-<%         
-count++;         
-out.println(count); %> 
- 
-<%        
-/*               
-any java code;               
-it will be placed in generated servlet _jspService()        
-*/ 
-%> 
- 
-<%          
- System.out.println("hello");           // valid 
- %> 
- 
-<%           
-public int x=20; // invalid, x is not final            
-out.println(x*2); 
-%>  
- 
-<%          
-final int x = 20; // valid, x is final          
-out.println(x*2);  
-%> 
- 
-<%           
-public int m1() {                    
-int x = 10;                    
-int y = 20; //invalid                     
-return x*y;            
-} 
-%> 
-Result is :<%= m1() %></code></pre>
-	
-	<p  style="font-weight:bold;color:#212121">What is the difference between the following ? 
-    </p>
-	<img src="j4.jpg">
-	
-	<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-             It's never recommended to write scriptlets in the jsp. 
+<b>isELIgnored="false"</b> <br>EL syntax will be evaluated and print its value. 
+ </p>
+
+<pre ><code class="language-java">&lt;%@ page isELIgnored="true" %> 
+The result is : ${2+3} </code></pre>
+<p><span style="font-weight:bold;color:#212121">output:</span><br/>
+            The result is : ${2+3} 
 </p>
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false" %>  
+The result is : ${2+3} </code></pre>
+<p><span style="font-weight:bold;color:#212121">output:</span><br/>
+            The result is : 5 </p>
+			<p>
+The default value of Jsp 1.2v is "true".<br>But from Jsp 2.0v onwards default value is "false". </p>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">isThreadSafe </span></div>
+
+<p>We can use this attribute to provide Thread Safety to the Jsp <b>isThreadSafe="true"</b>
+ <br>It means the jsp is already thread safe and it is not required to implement SingleThreadModel interface by the generated sevrlet<br><br>
+ <b>isThreadSafe="false"</b> <br>
+ The current Jsp is not Thread Safe hence to provide thread safety generated servlet should implement SingleThreadModel interface, In this case the jsp can process only one request at a time. 
+<br><br>The default value for isThreadSafe value is "true". 
+ </p>
+ 
+ <p  style="font-weight:bold;color:#212121">Which of the following to provide Thread Safety to the Jsp ? 
+    </p>
+<ul>
+	<li>&lt;%@ page isThreadSafe="true" %> // not provide </li>
+	<li>&lt;%@ page isThreadSafe="false" %> // provide </li>
+	<li>&lt;%@ page isThreadSafe="true" isThreadSafe="false" %> // not provide </li>
+	<li>No special arrangement is required because jsp is Thread Safe by default.</li>
+</ul>	 
+ 
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">contentType </span></div>
+ 
+ <ul>
+	<li>We have to use this attribute to specify content type of the response(mime type) </li>
+	<li>The defaut value of the contentType is "text/html".</li>
+</ul>
+ 
+ <p  style="font-weight:bold;color:#212121">If we want to send JSON object as response to the client ,what is the content type required in the Jsp ? 
+    </p>
+ 
+ <p><b>&lt;%@ page contentType="application/json" %> </b></p>
+ 
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">language </span></div>
+ <ul>
+	<li>Defines the language used in scriptlets, expressions, declarations, write now the only possible value is Java. </li>
+	<li>The defaut value of the language is "java".</li>
+</ul>
+ <p> <b>&lt;%@ page lanjuage="java" %></b> </p>
+ 
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">buffer </span></div>
+ 
+ <p>Defines how buffering is handled by the implicit out object (reference to JspWriter) </p>
+ 
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">autoFlush </span></div>
+ <p>Defines whether the buffered output is flushed automatically , the dafault value is "true". </p>
+ 
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">extends </span></div>
+ <p>Defines the super class of the class this jsp will become <br>&lt;%@ page extends="com. ......" %>//compiler error 
+ 
+ </p>
+ 
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">info </span></div>
+ <p>Defines a string that gets put in to the translated page just show that we can get it using the generated servlet inherited getServletInfo()) . </p>
+ 
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">isErrorPage </span></div>
+ <p>It is defined in exception implicit object. </p>
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">errorPage </span></div>
+ <p>It is defined in exception implicit object. </p>
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">pageEncoding</span></div>
+ <p>Defines the character encoding for the jsp's the default is "ISO-8859-1" </p>
+ 
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Summary of the page directive attributes : </span></div>
+ 
+ 
+<table>
+  <tr>
+    <th>Attribute name </th>
+    <th>Purpose </th>
+    <th>default value  </th>
+    
+    
+  </tr>
+  <tr>
+    <td>import</td>
+    <td>To import classes and interfaces of package  </td>
+    <td>There is no default value, but default packages are  <br>java.lang.*; <br>javax.servlet.*; <br>javax.servlet.http.*; <br>javax.servlet.jsp.*; </td>
+   
+   
+  </tr>
+   <tr>
+   <td>session </td>
+    <td>To make session object unavailable to Jsp  </td>
+    <td>true  </td>
+   
+    
+  </tr>
+  <tr>
+    <td>contentType</td>
+    <td>To specify mime type of the response </td>
+    <td>text/html </td>
+    
+    
+  </tr>
+  <tr>
+   <td>isELIgnored</td>
+    <td>To enable or disable Expression Language in our Jsp 
+ </td>
+    <td>false</td>
+    
+    
+  </tr>
+  
+    <tr>
+   <td>isThreadSafe  </td>
+    <td>To provide Thread Safety to the Jsp   </td>
+    <td>true  </td>
+   
+    
+  </tr>
+  <tr>
+    <td>language </td>
+    <td>
+If can be used to specify the scripting language which is used in Jsp  </td>
+    <td>java  </td>
+    
+    
+  </tr>
+  <tr>
+   <td>pageEncoding</td>
+    <td>Defines character encoding for the Jsp 
+ </td>
+    <td>ISO-8859-1 </td>
+    
+    
+  </tr>
+  
+  
+  <tr>
+   <td>autoFlush </td>
+    <td>Defines whether buffered output is flush automatically 
+ </td>
+    <td>true  </td>
+    
+    
+  </tr>
+  
+  
+ 
+</table>
+
+
+
+  <p  style="font-weight:bold;color:#212121">Is Servlet is ThreadSafe ? 
+    </p>
 	
-	<h4>Declarations : (<%! %>) </h4>
-	<p>1. We can use declaration tag to declare instance variables , instance methods, static variables , static methods , instance and static blocks , constructors, inner classes etc., <br><br></p>
+	<p>No, by default Sevlet is not ThreadSafe and we van provide Thread Safety by implementing SingleThreadModel interface. </p>
+	
+  <p  style="font-weight:bold;color:#212121">Is Jsp is ThreadSafe by default ? 
+    </p>
+	
+<p>No, Jsp is not ThreadSafe by default and we provide Thread Safety by taking page directive. <br>&lt;%@ page isThreadSafe="false" %> </p>
+
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Include Mechanism : 
+</span></div>
+
+<ul>
+	<li>several Jsp's required for common functionality then it's recommended to write that common functionality seperately in every jsp.</li>
+	<li>We have to write that common code into seperate file and we have to include that file where ever it is required.</li>
+</ul>
+
+<p>The main advantages in this approach is <br>
+<br>1. code re-usuability <br>2. improves maintanability <br>3. Enhancements will be come very easy 
+<br><br>We can achieve this include mechanism either by using include directive or include action. </p>
+
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">include directive : </span></div>
+
+<p>Syntax : <b>&lt;%@ include file="header.jsp" %> </b><br><br>This inclusion will happen at translation time hence this inclusion is also called static include or translation time inclusion </p>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">include action : </span></div>
+
+<p>Syntax :<b> <jsp: include page="footer.jsp" flush="true" /></b><br>This inclusion will happen at request processing time and hence it is considered asdynamic include or run time inclusion  </p>
+<p>header.jsp </p>
+
+    <pre ><code class="language-java">Master in java certification </code></pre>
 	
 	
-	
-	 <pre ><code class="language-java"><%!          
-	 // any java declarations 
-	 %> </code></pre>
-	
-<p>2. These declarations will be placed directly in the generated Servlet but outside of _jspService( ) </p>	
+	<p>footer.jsp </p>
+
+    <pre ><code class="language-java">learning subject is not enough, utilization is very important </code></pre>
 	
 	
-	 <pre ><code class="language-java"><%!           
-	 int x = 10 ;           
-	 static int y = 20;           
-	 public void m1() {                   
-	 System.out.println("allowed");           
-	 } 
-	 %> </code></pre>
+	<p>main.jsp </p>
+
+    <pre ><code class="language-java">&lt;%@ include file="header.jsp" %> 
+	welcome to learners , it is enough 
+	<jsp:include page="footer.jsp" flush="true" /></code></pre>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Difference between include directive and include action : </span></div>
+
+
+<table>
+  <tr>
+    <th>include directive</th>
+    <th>include action </th>
+    
+    
+    
+  </tr>
+  <tr>
+    <td><%@ include file="header.jsp" %>  It contains only one attribute and it is mandatory </td>
+    <td><jsp: include page="footer.jsp" flush="true" />  It contains 2 attributes i.e., page,flush.  page is mandatory,flush is optional   </td>
+    
+   
+   
+  </tr>
+   <tr>
+   <td>This inclusion will happen at translation time hence it's considered as static include. </td>
+    <td>This inclusion will happen at request processing time and hence it is considered as dynamic include. </td>
+    
+   
+    
+  </tr>
+  <tr>
+    <td>For both including and inluded Jsp's a single servet will be generated hence code sharing between the components is possible. </td>
+    <td>For including and included Jsp's seperate servlets will be generated, hence code sharing between components is not possible. </td>
+    
+    
+    
+  </tr>
+  <tr>
+   <td>Relatively performance is high </td>
+    <td>Relatively performance is low 
+ </td>
+    
+    
+    
+  </tr>
+  
+    <tr>
+   <td>There is no guarantee for the inclusion of latest version of included Jsp, it is a vendor dependent. </td>
+    <td>
+Always latest version of included page will be included.  </td>
+      
+    
+  </tr>
+  <tr>
+    <td>If the target resource won't change frequently then it is recommended to use static include</td>
+    <td>
+
+The target resource will change frequently then recommended to use dynamic include </td>
+    
+    
+    
+  </tr>
+  
+  
+  
+ 
+  
+  
+ 
+</table>
+
+
+<ul>
+	<li>To include header.jsp at translation time the required code is  &lt;%@ <b>include file="header.jsp" %> </b></li>
+	<li>To include header.jsp at request processing time the required code is  <b><jsp: include page="header.jsp" /> </b></li>
+</ul>
+
+<ol>
+	<li>&lt;%@ include page="footer.jsp" %> //invalid </li>
+	<li>&lt;%@ include file="footer.jsp" flush="true" %> //invalid </li>
+	<li>&lt;%@ include file="footer.jsp" />//invalid </li>
+	<li>&lt;%@ include file="footer.jsp" %> //valid </li>
+	<li><jsp:include file="footer.jsp" flush="true" />//invalid </li>
+	<li><jsp:include page="footer.jsp" flush="true" %>//invalid </li>
+	<li><jsp:include page="footer.jsp" flush="true" />//valid</li>
+</ol>
+
+<ul>
+	<li>page attribute applicable for include action but not for include directive where as the, file attribute applicable for include directive but not for include action.</li>
+	<li>flush attribute applicable only for include action but not for include directive.</li>
+</ul>
+
+
+ <p  style="font-weight:bold;color:#212121">Example:
+    </p>
 	
-	<p>3. Every statement present in declaration tag should compulsory ends with semicolon.</p>
-	
-	<img src="j5.jpg">
-	
-	<p>4. All implicit objects available in Jsp's are local variables inside _jspService( ) 
-	<br>5. Declaration tag code will be placed outside of _jspService() , Hence implicit objects we can't use in declaration tags. Otherwise we will get Compile time error. <br>
-	6. But we can use implicit objects inside scriptlets and expressions because their code will be placed inside _jspService( ) </p>
-	
+    <p>header.jsp</p>
+    <pre ><code class="language-java">&lt;%!    
+	int x=10 ;  
+%> </code></pre>
+
+
+ <p>main.jsp </p>
+    <pre ><code class="language-java">&lt;%@ include file="header.jsp" %>
+	The result of x is : &lt;%= x*100 %> //1000 </code></pre>
+
+
+
+ <p>main.jsp</p>
+    <pre ><code class="language-java">	<jsp:include page="header.jsp" /> 
+	The result of x : &lt;%= x*100 %> //x can't be resolved  </code></pre>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">taglib directive : </span></div>
+
+<p>syntax : <b>&lt;%@ taglib prefix="mime" uri="www.awwalsoft.com" %></b> </p>
+
+<ul>
+	<li>We can use Taglib directive to make custom tag functionality available to the jsp </li>
+	<li>taglib directive contains 2 attributes <br>1. prefix <br>2. uri </li>
+	<li>prefix can be used with in the Jsp, uri can be used to specify location of TLD file. </li>
+	<li>For every custom tag in the Jsp seperate taglib directive is required.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

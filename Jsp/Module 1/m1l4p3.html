@@ -251,133 +251,277 @@ tr:nth-child(even) {
   <div class="container">
     
   
-<h3>Scripting Elements  </h3>
-<p>There are 2 types of Scripting elements<br> <br>
-1. Traditional Scripting elements <br>1. Expressions <br>2. Scriptlets <br>3. Declarative <br>4. Comments <br><br>2. Modern Scripting elements <br>1. EL <br>2. JSTL </p>
 
-<h4>Expressions :(<%= %>) </h4>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">out : javax.servlet.jsp.JspWriter(AC)</span></div>
 
-<p>Expression can be used to print java expression to the jsp.</p>
- <p  style="font-weight:bold;color:#212121">Example:
-    </p> <p><%= 2+3 %>   (OR)  out.print(2+3); 
- 
-<br><br>Expression will become argument to out.print( ) present in _jspService( ) 
-<br>Inside jsp expression , expression value should not ends with semicolon otherwise we will get http status 500 error.  </p>
- <p  style="font-weight:bold;color:#212121">Example:
+<ul>
+	<li>This implicit object of type javax.servlet.jsp.JspWriter, This object is specially designed forJsp's to write character data to the response object.</li>
+	<li>The main difference between PrintWriter and jspWriter in the case of PrintWriter there is nobuffering concept is available .hence whenever we are writing any data by using PrintWriter it will be return directly into the response object.</li>
+	<li>But in the case of JspWriter buffer concept is available, hence whenever we are writing by using JspWriter it will be written to the buffer and at the end total buffer data will be addedto the response object.</li>
+	<li>Except this buffer difference , there is no other difference between JspWriter and PrintWriter.<br>JspWriter=PrintWriter+buffer</li>
+</ul>
+
+<p>out.jsp</p>
+    <pre ><code class="language-java">&lt;%@page autoFlush="true" %>
+&lt;%
+ java.io.PrintWriter pw=response.getWriter();
+ pw.println("Good Morning John");
+ pw.println("Good Morning Charlie");
+ pw.println("Good Morning Sam");
+ pw.println("Good Morning Roy");
+%>
+</code></pre>
+<p  style="font-weight:bold;color:#212121">Output: 
     </p>
-	<p><b> <%= newDate( ); %>  (OR)  out.print(new Date( ) ; );</b>   // 500  status code <br><br>
-Inside expressions we can take method calls also but void return type method calls are not allowed. 
-<br><%= math.random( ) %>       //valid <br><%=(new AL( ) ).clear( ) %>   // invalid     
-<br>because  void return type methods  are not allowed 
-<br><br>Inside expression space is not allowed between % and = , otherwise it will be treated as scriptlet which causes compile time error . <br><%  =20 %>
-<br> _jspService() { <br>=20 ;   // invalid statememt <br>}   <br><br>Declarations are not allowed in expressions i.e., declaring variables,methods etc.,
-<br><%= String s="awwal" %>  OR <br><br>
- 
-out.println(String s="awwal");   //invalid   </p>
+<p>Good Morning John
+Good Morning Charlie
+Good Morning Sam
+Good Morning Roy</p>
+
+<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
+            1. autoFlush="true" A value of true indicates automatically buffer flushing , A value of false
+indicates and value of false throws an exception.<br>
+2. It causes the servlet throws an exception when the servlet output buffer is full.<br>
+3. In Jsp can't set the false value for autoFlush attribute , if the buffer is "none".<br>
+4. The default buffer size is 8kb and none is also valid for the buffer attribute , In this case
+whenever we are writing any data by using JspWriter that time it will be return directly to the
+response object.</p>
+
+			
+
+
+
+
+
+
+	<p>out.jsp 
+</p>
+
+ <pre ><code class="language-java">&lt;%@page autoFlush="true" buffer="none" %>
+&lt;%
+ java.io.JspWriter jw=response.getWriter(); 
+ jw.println("Good Morning John");
+ jw.println("Good Morning Charlie");
+ jw.println("Good Morning Sam");
+ jw.println("Good Morning Roy");
+%></code></pre>
 	
 	
 	
-	 <p  style="font-weight:bold;color:#212121">Which of the following Expressions are valid ? 
-    </p>
-<p>1. <%= 2*3 %> //valid <br>2. <%= 2<3 %> //valid <br>3. <%= math.sqrt(4) %> //valid <br>4. <%= 2*3 ; %> //invalid <br>5. <%= new Student( ) %>         // sop(new Student( ) ); //valid </p>	
-	
-	<h3>Scriptlet : (<% %>) </h3>
-<p>1. We can use scriptlet to place java code in the jsp <br>
-<%  any  java code %> // this java code in _jspService() <br><br>
-2. Scriptlet code will be placed directly inside _jspService( ) of generated servlet. <br>3. Every java statement present inside scriptlet should ends with semicolon(;). </p>	
-	
- <p  style="font-weight:bold;color:#212121">Write Jsp to print hit count : 
+	<p  style="font-weight:bold;color:#212121">Output: 
     </p>	
 	
- <pre ><code class="language-java"><%           
- int count = 0;           
- count++;          //every request count initialized to 0 and print 1           
- out.println(count); 
- %> 
- </code></pre>	
-<p>This Jsp is invalid and generates '1' as response every time, here count variable is local. </p>	
+<p>Good Morning John
+Good Morning Charlie
+Good Morning Sam
+Good Morning Roy</p>
+
+<ul>
+	<li>With in the Jsp we can use either PrintWriter or JspWriter but not recommended to use both simultaniously.</li>
+	<li>JspWriter is the child class of Writer, hence all methods available in writer are available by default to the JspWriter through Inheritence.</li>
+	<li>In addition to these methods JspWriter contains print(), println() methods, add any type ofdata add to these methods.</li>
+</ul>
+
+    <pre ><code class="language-java">Writer(AC) write(int)
+ write(char)
+ write(String)
+ JspWriter(AC) print()
+ println()
+
+ //AC = abstract class
+</code></pre>
+
+  <p  style="font-weight:bold;color:#212121">Example:</p>
+
+  
+      <pre ><code class="language-java">&lt;%
+ out.print("The PI value is :");
+ out.println(3.14);
+ out.print("This exactly ");
+ out.println(true);
+output:
+The PI value is : 3.14
+This exactly true
+%></code></pre>
+
+<p  style="font-weight:bold;color:#212121">How to write response in Jsp
+
+    </p>	
 	
-	 <pre ><code class="language-java"><%!          
-int  count = 0 ; 
-%> 
- 
-<%         
-count++;         
-out.println(count); %> 
- 
-<%        
-/*               
-any java code;               
-it will be placed in generated servlet _jspService()        
-*/ 
-%> 
- 
-<%          
- System.out.println("hello");           // valid 
- %> 
- 
-<%           
-public int x=20; // invalid, x is not final            
-out.println(x*2); 
-%>  
- 
-<%          
-final int x = 20; // valid, x is final          
-out.println(x*2);  
-%> 
- 
-<%           
-public int m1() {                    
-int x = 10;                    
-int y = 20; //invalid                     
-return x*y;            
-} 
-%> 
-Result is :<%= m1() %></code></pre>
+	<p>By using out implicit object which is of the type Writer. 
+</p>
+
+
+<p  style="font-weight:bold;color:#212121">What is the difference between PrintWriter and JspWriter ? 
+    </p>	
 	
-	<p  style="font-weight:bold;color:#212121">What is the difference between the following ? 
-    </p>
-	<img src="j4.jpg">
+	<p> 
+	Buffering<br>
+JspWriter = PrintWriter + buffer
+</p>
+
 	
-	<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-             It's never recommended to write scriptlets in the jsp. 
+	
+<p  style="font-weight:bold;color:#212121">What is the difference between out.write(100) and out.print(100) ?
+ 
+    </p>	
+	<ul>
+	<li>In the case of write(100), the corresponding character "d" will be added to the response.</li>
+	<li>In the case of print(100) , the int value 100 will be added to the response.</li>
+</ul>
+<p  style="font-weight:bold;color:#212121">Example:
+    </p>	
+	
+  <pre ><code class="language-java">&lt;%
+ out.write(100); //d
+ out.print(100); //100
+%></code></pre>
+	
+	
+	
+	
+
+
+
+
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">pageContext : (javax.servlet.jsp.PageContext)</span></div>
+
+<ul>
+	<li>The pageContext implicit object is a type of javax.servlet.jsp.pageContext(AC).</li>
+	<li>It is an abstract class and vendor is responsible to provide implementation ,PageContext is the child class of JspContext(jsp 2.0v)</li>
+	<li>PageContext class is useful in ClassicTagModel.</li>
+</ul>
+
+<p>We can pageContext implicit object for the following 3 purposes</p>
+
+<ol>
+	<li>To get all other Jsp implicit objects.</li>
+	<li>To perform RequestDispatcher Mechanism</li>
+	<li>To perform Attribute Management in any scope (Jsp scopes)</li>
+</ol>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">How to get all other Jsp implicit objects ?
+</span></div>
+
+<p>By using pageContext implicit object we can get any other jsp implicit objects, hence pageContext
+implicit object act as a single point of contact for the remaining implicit objects.
+PageContext class defines the following methods to retrive remaining all other implicit objects.</p>
+
+<pre ><code class="language-java">request --> getRequest()
+response --> getResponse()
+config --> getServletConfig()
+application --> getServletContext()
+session --> getSession()
+page --> getPage()
+out --> getOut()
+exception --> getException()</code></pre>
+	
+<ul>
+	<li>These methods are not useful with in the Jsp because all jsp implicit objects already available to every Jsp,</li>
+	<li>These methods are useful outside of Jsp mostly in custom tags(Tag Handler Classes).</li>
+</ul>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">To perform RequestDispatcher Mechanism :</span></div>
+
+<p>We can use pageContext implicit object to perform RequestDispatcher activity also, for this purpose<br>
+pageContext class defines the following methods<br>
+public void forward(String targetPath);<br>
+public void include(String targetPath);<br>
+
+</p>
+
+
+<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
+            All the rules of ServletRequestDispatcher will be applicable for pageContext implicit object
+based on RequestDispatcher mechanism.</p>
+
+<p  style="font-weight:bold;color:#212121">first.jsp
 </p>
 	
-	<h4>Declarations : (<%! %>) </h4>
-	<p>1. We can use declaration tag to declare instance variables , instance methods, static variables , static methods , instance and static blocks , constructors, inner classes etc., <br><br></p>
+    
+    <pre ><code class="language-java">This is RD mechanism using pageContext implicit object
+&lt;%
+pageContext.forward("second.jsp");
+System.out.println("control come back");
+%></code></pre>
 	
+	<p  style="font-weight:bold;color:#212121">second.jsp</p>
 	
-	
-	 <pre ><code class="language-java"><%!          
-	 // any java declarations 
-	 %> </code></pre>
-	
-<p>2. These declarations will be placed directly in the generated Servlet but outside of _jspService( ) </p>	
-	
-	
-	 <pre ><code class="language-java"><%!           
-	 int x = 10 ;           
-	 static int y = 20;           
-	 public void m1() {                   
-	 System.out.println("allowed");           
-	 } 
-	 %> </code></pre>
-	
-	<p>3. Every statement present in declaration tag should compulsory ends with semicolon.</p>
-	
-	<img src="j5.jpg">
-	
-	<p>4. All implicit objects available in Jsp's are local variables inside _jspService( ) 
-	<br>5. Declaration tag code will be placed outside of _jspService() , Hence implicit objects we can't use in declaration tags. Otherwise we will get Compile time error. <br>
-	6. But we can use implicit objects inside scriptlets and expressions because their code will be placed inside _jspService( ) </p>
-	
+    
+    <pre ><code class="language-java">This is second jsp
+&lt;% java.util.Enumeration e=request.getAttributeNames(); %>
+</code></pre>
 
 
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">To perform Attribute Management in any scope (Jsp scopes) :
+</span></div>
+<p>We can use pageContext implicit object to perform attribute management in any scope (will be
+covered in Jsp scopes)</p>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">exception :</span></div>
+<p>configuring error pages in Jsp.<br><br>
+We can configuring the following 2 approaches<br><br>
+1. Declarative Approach<br>
+2. Programmatic Approach</p>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Declarative Approach :</span></div>
+<p>We can configure error pages according to a particular exceptions or perticular error code in web.xml
+as follows</p>
+    <pre ><code class="language-java">&lt;web-app>
+ &lt;error-page>
+ &lt;exception-type>java.lang.ArithmeticExeption&lt;/exception-type>
+ &lt;location>/error.jsp&lt;/location>
+ &lt;/error-page>
+ &lt;error-page>
+ &lt;error-code>404&lt;/error-code>
+ &lt;location>/error404.jsp&lt;/location>
+ &lt;/error-page>
+&lt;/web-app></code></pre>
 
 
- 
- 
- 
+ <p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
+            The error pages configured in this approach is applicable entire web-application(not a
+particular servlet Or not a perticular Jsp).</p>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Programmatic Approach :</span></div>
+<p>We can configure error pages for a particular Jsp by using error page attribute of page directive.<br>
+demo.jsp</p>
+    <pre ><code class="language-java">&lt;%@page errorPage="error.jsp" %>
+&lt;% out.println(10/0); %></code></pre>
+
+<ul>
+	<li>In demo.jsp any problem or exception occurs then error.jsp is responsible to report that error.</li>
+	<li>This way of configuring error pages for a particular jsp we can declare jsp as a error page by using isErrorPage attribute of page directive.</li>
+	<li>In error pages only exception implicit object is available.</li>
+</ul>
+
+<p>error.jsp</p>
+    <pre ><code class="language-java">&lt;%@page isErrorPage="true" %>
+The raised Exception is : &lt;%= exception %>
+ //internally toString() calling</code></pre>
+ <p>
+ If Jsp is not configuring/declared as a error page and if we are trying to use exception implicit object
+then we will get compile time error saying that exception can't be resolved.<br><br>
+error.jsp<br>
+The raised Exception is : &lt;%= exception %><br><br>
+If we are trying to access error page directly without taking any exception then exception implicit
+object value refers null.</p>
+  <p  style="font-weight:bold;color:#212121">Example:</p>
+<p> http://localhost:2018/jspApp/error.jsp<br><br>
+If we are configuring both declarative and programmatic approach on web-application, then
+programmatic approach will be effected.</p>
+
+  <p  style="font-weight:bold;color:#212121">Which approach is best approach to configure error pages ?</p>
+
+<p>Declarative approach is best approach because we can customize error pages based on exception type
+and error code.</p>
+<ul>
+	<li>jsp implicit objects are local variables of _jspService() in the generated servlet, hence we are allowed to use these implicit objects inside scriptlet and expression tag because the corresponding code will be place inside _jspService(), but we are not allowed to access declaration tag because it's code will be placed outside of _jspService().</li>
+	<li>The most powerful implicit object is pageContext and rarely used implicit object is page.</li>
+	<li>Among 9 implicit objects except session & exception , all remaining implicit objects are always available in every Jsp we can't make them unavailable.</li>
+	<li>session implicit object is by default available in every jsp but we can make it's unavailable by using session attribute of page directive.<br>&lt;%@page session="false" %></li>
+	<li>exception implicit object is by default not available to every jsp but we can make it's available by using isErrorPage attribute of page directive.<br>&lt;%@page isErrorPage="true" %></li>
+</ul>
+
  </div>
 </div>
 <script>var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var e=/\blang(?:uage)?-([\w-]+)\b/i,t=0,n=_self.Prism={manual:_self.Prism&&_self.Prism.manual,disableWorkerMessageHandler:_self.Prism&&_self.Prism.disableWorkerMessageHandler,util:{encode:function(e){return e instanceof r?new r(e.type,n.util.encode(e.content),e.alias):"Array"===n.util.type(e)?e.map(n.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function(e,t){var r=n.util.type(e);switch(t=t||{},r){case"Object":if(t[n.util.objId(e)])return t[n.util.objId(e)];var a={};t[n.util.objId(e)]=a;for(var l in e)e.hasOwnProperty(l)&&(a[l]=n.util.clone(e[l],t));return a;case"Array":if(t[n.util.objId(e)])return t[n.util.objId(e)];var a=[];return t[n.util.objId(e)]=a,e.forEach(function(e,r){a[r]=n.util.clone(e,t)}),a}return e}},languages:{extend:function(e,t){var r=n.util.clone(n.languages[e]);for(var a in t)r[a]=t[a];return r},insertBefore:function(e,t,r,a){a=a||n.languages;var l=a[e];if(2==arguments.length){r=arguments[1];for(var i in r)r.hasOwnProperty(i)&&(l[i]=r[i]);return l}var o={};for(var s in l)if(l.hasOwnProperty(s)){if(s==t)for(var i in r)r.hasOwnProperty(i)&&(o[i]=r[i]);o[s]=l[s]}return n.languages.DFS(n.languages,function(t,n){n===a[e]&&t!=e&&(this[t]=o)}),a[e]=o},DFS:function(e,t,r,a){a=a||{};for(var l in e)e.hasOwnProperty(l)&&(t.call(e,l,e[l],r||l),"Object"!==n.util.type(e[l])||a[n.util.objId(e[l])]?"Array"!==n.util.type(e[l])||a[n.util.objId(e[l])]||(a[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,l,a)):(a[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,null,a)))}},plugins:{},highlightAll:function(e,t){n.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,r){var a={callback:r,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};n.hooks.run("before-highlightall",a);for(var l,i=a.elements||e.querySelectorAll(a.selector),o=0;l=i[o++];)n.highlightElement(l,t===!0,a.callback)},highlightElement:function(t,r,a){for(var l,i,o=t;o&&!e.test(o.className);)o=o.parentNode;o&&(l=(o.className.match(e)||[,""])[1].toLowerCase(),i=n.languages[l]),t.className=t.className.replace(e,"").replace(/\s+/g," ")+" language-"+l,t.parentNode&&(o=t.parentNode,/pre/i.test(o.nodeName)&&(o.className=o.className.replace(e,"").replace(/\s+/g," ")+" language-"+l));var s=t.textContent,u={element:t,language:l,grammar:i,code:s};if(n.hooks.run("before-sanity-check",u),!u.code||!u.grammar)return u.code&&(n.hooks.run("before-highlight",u),u.element.textContent=u.code,n.hooks.run("after-highlight",u)),n.hooks.run("complete",u),void 0;if(n.hooks.run("before-highlight",u),r&&_self.Worker){var g=new Worker(n.filename);g.onmessage=function(e){u.highlightedCode=e.data,n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,a&&a.call(u.element),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},g.postMessage(JSON.stringify({language:u.language,code:u.code,immediateClose:!0}))}else u.highlightedCode=n.highlight(u.code,u.grammar,u.language),n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,a&&a.call(t),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},highlight:function(e,t,a){var l={code:e,grammar:t,language:a};return n.hooks.run("before-tokenize",l),l.tokens=n.tokenize(l.code,l.grammar),n.hooks.run("after-tokenize",l),r.stringify(n.util.encode(l.tokens),l.language)},matchGrammar:function(e,t,r,a,l,i,o){var s=n.Token;for(var u in r)if(r.hasOwnProperty(u)&&r[u]){if(u==o)return;var g=r[u];g="Array"===n.util.type(g)?g:[g];for(var c=0;c<g.length;++c){var h=g[c],f=h.inside,d=!!h.lookbehind,m=!!h.greedy,p=0,y=h.alias;if(m&&!h.pattern.global){var v=h.pattern.toString().match(/[imuy]*$/)[0];h.pattern=RegExp(h.pattern.source,v+"g")}h=h.pattern||h;for(var b=a,k=l;b<t.length;k+=t[b].length,++b){var w=t[b];if(t.length>e.length)return;if(!(w instanceof s)){if(m&&b!=t.length-1){h.lastIndex=k;var _=h.exec(e);if(!_)break;for(var j=_.index+(d?_[1].length:0),P=_.index+_[0].length,A=b,x=k,O=t.length;O>A&&(P>x||!t[A].type&&!t[A-1].greedy);++A)x+=t[A].length,j>=x&&(++b,k=x);if(t[b]instanceof s)continue;I=A-b,w=e.slice(k,x),_.index-=k}else{h.lastIndex=0;var _=h.exec(w),I=1}if(_){d&&(p=_[1]?_[1].length:0);var j=_.index+p,_=_[0].slice(p),P=j+_.length,N=w.slice(0,j),S=w.slice(P),C=[b,I];N&&(++b,k+=N.length,C.push(N));var E=new s(u,f?n.tokenize(_,f):_,y,_,m);if(C.push(E),S&&C.push(S),Array.prototype.splice.apply(t,C),1!=I&&n.matchGrammar(e,t,r,b,k,!0,u),i)break}else if(i)break}}}}},tokenize:function(e,t){var r=[e],a=t.rest;if(a){for(var l in a)t[l]=a[l];delete t.rest}return n.matchGrammar(e,r,t,0,0,!1),r},hooks:{all:{},add:function(e,t){var r=n.hooks.all;r[e]=r[e]||[],r[e].push(t)},run:function(e,t){var r=n.hooks.all[e];if(r&&r.length)for(var a,l=0;a=r[l++];)a(t)}}},r=n.Token=function(e,t,n,r,a){this.type=e,this.content=t,this.alias=n,this.length=0|(r||"").length,this.greedy=!!a};if(r.stringify=function(e,t,a){if("string"==typeof e)return e;if("Array"===n.util.type(e))return e.map(function(n){return r.stringify(n,t,e)}).join("");var l={type:e.type,content:r.stringify(e.content,t,a),tag:"span",classes:["token",e.type],attributes:{},language:t,parent:a};if(e.alias){var i="Array"===n.util.type(e.alias)?e.alias:[e.alias];Array.prototype.push.apply(l.classes,i)}n.hooks.run("wrap",l);var o=Object.keys(l.attributes).map(function(e){return e+'="'+(l.attributes[e]||"").replace(/"/g,"&quot;")+'"'}).join(" ");return"<"+l.tag+' class="'+l.classes.join(" ")+'"'+(o?" "+o:"")+">"+l.content+"</"+l.tag+">"},!_self.document)return _self.addEventListener?(n.disableWorkerMessageHandler||_self.addEventListener("message",function(e){var t=JSON.parse(e.data),r=t.language,a=t.code,l=t.immediateClose;_self.postMessage(n.highlight(a,n.languages[r],r)),l&&_self.close()},!1),_self.Prism):_self.Prism;var a=document.currentScript||[].slice.call(document.getElementsByTagName("script")).pop();return a&&(n.filename=a.src,n.manual||a.hasAttribute("data-manual")||("loading"!==document.readyState?window.requestAnimationFrame?window.requestAnimationFrame(n.highlightAll):window.setTimeout(n.highlightAll,16):document.addEventListener("DOMContentLoaded",n.highlightAll))),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism);

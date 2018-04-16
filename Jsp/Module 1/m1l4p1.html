@@ -251,133 +251,166 @@ tr:nth-child(even) {
   <div class="container">
     
   
-<h3>Scripting Elements  </h3>
-<p>There are 2 types of Scripting elements<br> <br>
-1. Traditional Scripting elements <br>1. Expressions <br>2. Scriptlets <br>3. Declarative <br>4. Comments <br><br>2. Modern Scripting elements <br>1. EL <br>2. JSTL </p>
-
-<h4>Expressions :(<%= %>) </h4>
-
-<p>Expression can be used to print java expression to the jsp.</p>
- <p  style="font-weight:bold;color:#212121">Example:
-    </p> <p><%= 2+3 %>   (OR)  out.print(2+3); 
- 
-<br><br>Expression will become argument to out.print( ) present in _jspService( ) 
-<br>Inside jsp expression , expression value should not ends with semicolon otherwise we will get http status 500 error.  </p>
- <p  style="font-weight:bold;color:#212121">Example:
-    </p>
-	<p><b> <%= newDate( ); %>  (OR)  out.print(new Date( ) ; );</b>   // 500  status code <br><br>
-Inside expressions we can take method calls also but void return type method calls are not allowed. 
-<br><%= math.random( ) %>       //valid <br><%=(new AL( ) ).clear( ) %>   // invalid     
-<br>because  void return type methods  are not allowed 
-<br><br>Inside expression space is not allowed between % and = , otherwise it will be treated as scriptlet which causes compile time error . <br><%  =20 %>
-<br> _jspService() { <br>=20 ;   // invalid statememt <br>}   <br><br>Declarations are not allowed in expressions i.e., declaring variables,methods etc.,
-<br><%= String s="awwal" %>  OR <br><br>
- 
-out.println(String s="awwal");   //invalid   </p>
-	
-	
-	
-	 <p  style="font-weight:bold;color:#212121">Which of the following Expressions are valid ? 
-    </p>
-<p>1. <%= 2*3 %> //valid <br>2. <%= 2<3 %> //valid <br>3. <%= math.sqrt(4) %> //valid <br>4. <%= 2*3 ; %> //invalid <br>5. <%= new Student( ) %>         // sop(new Student( ) ); //valid </p>	
-	
-	<h3>Scriptlet : (<% %>) </h3>
-<p>1. We can use scriptlet to place java code in the jsp <br>
-<%  any  java code %> // this java code in _jspService() <br><br>
-2. Scriptlet code will be placed directly inside _jspService( ) of generated servlet. <br>3. Every java statement present inside scriptlet should ends with semicolon(;). </p>	
-	
- <p  style="font-weight:bold;color:#212121">Write Jsp to print hit count : 
-    </p>	
-	
- <pre ><code class="language-java"><%           
- int count = 0;           
- count++;          //every request count initialized to 0 and print 1           
- out.println(count); 
- %> 
- </code></pre>	
-<p>This Jsp is invalid and generates '1' as response every time, here count variable is local. </p>	
-	
-	 <pre ><code class="language-java"><%!          
-int  count = 0 ; 
-%> 
- 
-<%         
-count++;         
-out.println(count); %> 
- 
-<%        
-/*               
-any java code;               
-it will be placed in generated servlet _jspService()        
-*/ 
-%> 
- 
-<%          
- System.out.println("hello");           // valid 
- %> 
- 
-<%           
-public int x=20; // invalid, x is not final            
-out.println(x*2); 
-%>  
- 
-<%          
-final int x = 20; // valid, x is final          
-out.println(x*2);  
-%> 
- 
-<%           
-public int m1() {                    
-int x = 10;                    
-int y = 20; //invalid                     
-return x*y;            
-} 
-%> 
-Result is :<%= m1() %></code></pre>
-	
-	<p  style="font-weight:bold;color:#212121">What is the difference between the following ? 
-    </p>
-	<img src="j4.jpg">
-	
-	<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-             It's never recommended to write scriptlets in the jsp. 
-</p>
-	
-	<h4>Declarations : (<%! %>) </h4>
-	<p>1. We can use declaration tag to declare instance variables , instance methods, static variables , static methods , instance and static blocks , constructors, inner classes etc., <br><br></p>
-	
-	
-	
-	 <pre ><code class="language-java"><%!          
-	 // any java declarations 
-	 %> </code></pre>
-	
-<p>2. These declarations will be placed directly in the generated Servlet but outside of _jspService( ) </p>	
-	
-	
-	 <pre ><code class="language-java"><%!           
-	 int x = 10 ;           
-	 static int y = 20;           
-	 public void m1() {                   
-	 System.out.println("allowed");           
-	 } 
-	 %> </code></pre>
-	
-	<p>3. Every statement present in declaration tag should compulsory ends with semicolon.</p>
-	
-	<img src="j5.jpg">
-	
-	<p>4. All implicit objects available in Jsp's are local variables inside _jspService( ) 
-	<br>5. Declaration tag code will be placed outside of _jspService() , Hence implicit objects we can't use in declaration tags. Otherwise we will get Compile time error. <br>
-	6. But we can use implicit objects inside scriptlets and expressions because their code will be placed inside _jspService( ) </p>
-	
-
-
-
+<h3>JSP Implicit Objects </h3>
+<ul>
+	<li>Objective: For the given scinario write a jsp code by using appropriate jsp implicit objects.</li>
+	<li>When compared with Servlet programming developing jsp's is very easy. Because the required</li>
+	<li>mandatory stuff automatically available in every jsp.</li>
+	<li>Implicit objects also one such area , implicit objects also bydefault available .</li>
+</ul>
 
  
+ <p><span style="font-weight:bold;color:#212121">The following is the list of all implicit objects :</span><br/>
+          </p>
  
+<table>
+  <tr>
+    <th>Implicit Object</th>
+    <th>Type  </th>
+    
+    
+    
+  </tr>
+  <tr>
+    <td>request </td>
+    <td>javax.servlet.http.HttpServletRequest(I) </td>
+    
+   
+   
+  </tr>
+   <tr>
+   <td>response </td>
+    <td>javax.servlet.http.HttpServletResponse(I) </td>
+    
+   
+    
+  </tr>
+  <tr>
+    <td>config </td>
+    <td>javax.servlet.ServletConfig(I)</td>
+    
+   
+
+
+  </tr>
+  <tr>
+   <td>application</td>
+    <td>javax.servlet.ServletContext(I) 
+ </td>
+    
+    
+    
+  </tr>
+  
+    <tr>
+   <td>session</td>
+    <td>
+javax.servlet.http.HttpSession(I) </td>
+      
+    
+  </tr>
+  <tr>
+    <td>out </td>
+    <td>javax.servlet.jsp.JspWriter(AC)</td>
+    
+    
+    
+  </tr>
+
+   <tr>
+   <td>page</td>
+    <td>
+java.lang.object(CC)</td>
+      
+    
+  </tr>
+  <tr>
+    <td>pageContext </td>
+    <td>javax.servlet.jsp.PageContext(AC)</td>
+    
+    
+    
+  </tr>
+  <tr>
+    <td>exception </td>
+    <td>java.lang.Throwable(CC)</td>
+    
+    
+    
+  </tr>
+  
+  
  
+  
+  
+ 
+</table>
+
+<br>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">request & response implicit objects:
+</span></div>
+
+
+<ul>
+	<li>request and response implicit objects are available to the jsp are arguments to _jspService()</li>
+	<li>All the methods present in HttpServletRequest and HttpServletResponse can be applicable on this request and response implicit objects.</li>
+</ul>
+
+<p>index.html</p>
+
+ <pre ><code class="language-java">&lt;form action="test.jsp">
+ Enter UserName : &lt;input type="text" name="uname" /> &lt;br>
+ Enter Course : &lt;input type="text" name="course" /> &lt;br>
+ Enter Place : &lt;input type="text" name="place" /> &lt;br>
+ &lt;input type="submit" value="submit">
+&lt;/form></code></pre>
+
+<p>test.jsp</p>
+
+ <pre ><code class="language-java">&lt;%@page import="java.util.*" %>
+ The request method:&lt;%= request.getMethod() %>
+ The User Name : &lt;%=request.getParameter("uname") %>
+&lt;%
+ Enumeration e=request.getParameterNames();
+ while(e.hasMoreElements() ) {
+%>
+&lt;%= request.getParameter((String)e.nextElement()) %>
+&lt;% } %>
+&lt;%
+ response.setContentType("text/xml");
+ response.setHeader("awwal","AWWALSOFT");
+%></code></pre>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">application : (javax.servlet.ServletContext)</span></div>
+<p>This implicit object of type javax.servlet.ServletContext , which provides environment of the webapplication,
+what ever the methods available in ServletContext those methods are available
+application implicit object also</p>
+
+  <p  style="font-weight:bold;color:#212121">Example:</p>
+    <pre ><code class="language-java">&lt;%
+ RequestDispatcher rd = application.getRequestDispatcher("/header.jsp");//absolute path
+ rd.include(request,response); //OR
+ rd.forward(request,response);
+%>
+</code></pre>
+<p>application.jsp</p>
+
+    <pre ><code class="language-java">&lt;%
+java.util.Enumeration e=application.getInitParameterNames();
+while(e.hasMoreElements()) {
+%>
+&lt;%= application.getInitParameter((String)e.nextElement()) %>
+&lt;% } %></code></pre>
+<p>web.xml</p>
+    <pre ><code class="language-java">&lt;web-app>
+ &lt;display-name>MyJsp&lt;/display-name>
+ &lt;context-param>
+ &lt;param-name>uname&lt;/param-name>
+ &lt;param-value>ashok&lt;/param-value>
+ &lt;/context-param>
+ ------------
+&lt;/web-app></code></pre>
+
+
  </div>
 </div>
 <script>var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(){var e=/\blang(?:uage)?-([\w-]+)\b/i,t=0,n=_self.Prism={manual:_self.Prism&&_self.Prism.manual,disableWorkerMessageHandler:_self.Prism&&_self.Prism.disableWorkerMessageHandler,util:{encode:function(e){return e instanceof r?new r(e.type,n.util.encode(e.content),e.alias):"Array"===n.util.type(e)?e.map(n.util.encode):e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).match(/\[object (\w+)\]/)[1]},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++t}),e.__id},clone:function(e,t){var r=n.util.type(e);switch(t=t||{},r){case"Object":if(t[n.util.objId(e)])return t[n.util.objId(e)];var a={};t[n.util.objId(e)]=a;for(var l in e)e.hasOwnProperty(l)&&(a[l]=n.util.clone(e[l],t));return a;case"Array":if(t[n.util.objId(e)])return t[n.util.objId(e)];var a=[];return t[n.util.objId(e)]=a,e.forEach(function(e,r){a[r]=n.util.clone(e,t)}),a}return e}},languages:{extend:function(e,t){var r=n.util.clone(n.languages[e]);for(var a in t)r[a]=t[a];return r},insertBefore:function(e,t,r,a){a=a||n.languages;var l=a[e];if(2==arguments.length){r=arguments[1];for(var i in r)r.hasOwnProperty(i)&&(l[i]=r[i]);return l}var o={};for(var s in l)if(l.hasOwnProperty(s)){if(s==t)for(var i in r)r.hasOwnProperty(i)&&(o[i]=r[i]);o[s]=l[s]}return n.languages.DFS(n.languages,function(t,n){n===a[e]&&t!=e&&(this[t]=o)}),a[e]=o},DFS:function(e,t,r,a){a=a||{};for(var l in e)e.hasOwnProperty(l)&&(t.call(e,l,e[l],r||l),"Object"!==n.util.type(e[l])||a[n.util.objId(e[l])]?"Array"!==n.util.type(e[l])||a[n.util.objId(e[l])]||(a[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,l,a)):(a[n.util.objId(e[l])]=!0,n.languages.DFS(e[l],t,null,a)))}},plugins:{},highlightAll:function(e,t){n.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,r){var a={callback:r,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};n.hooks.run("before-highlightall",a);for(var l,i=a.elements||e.querySelectorAll(a.selector),o=0;l=i[o++];)n.highlightElement(l,t===!0,a.callback)},highlightElement:function(t,r,a){for(var l,i,o=t;o&&!e.test(o.className);)o=o.parentNode;o&&(l=(o.className.match(e)||[,""])[1].toLowerCase(),i=n.languages[l]),t.className=t.className.replace(e,"").replace(/\s+/g," ")+" language-"+l,t.parentNode&&(o=t.parentNode,/pre/i.test(o.nodeName)&&(o.className=o.className.replace(e,"").replace(/\s+/g," ")+" language-"+l));var s=t.textContent,u={element:t,language:l,grammar:i,code:s};if(n.hooks.run("before-sanity-check",u),!u.code||!u.grammar)return u.code&&(n.hooks.run("before-highlight",u),u.element.textContent=u.code,n.hooks.run("after-highlight",u)),n.hooks.run("complete",u),void 0;if(n.hooks.run("before-highlight",u),r&&_self.Worker){var g=new Worker(n.filename);g.onmessage=function(e){u.highlightedCode=e.data,n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,a&&a.call(u.element),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},g.postMessage(JSON.stringify({language:u.language,code:u.code,immediateClose:!0}))}else u.highlightedCode=n.highlight(u.code,u.grammar,u.language),n.hooks.run("before-insert",u),u.element.innerHTML=u.highlightedCode,a&&a.call(t),n.hooks.run("after-highlight",u),n.hooks.run("complete",u)},highlight:function(e,t,a){var l={code:e,grammar:t,language:a};return n.hooks.run("before-tokenize",l),l.tokens=n.tokenize(l.code,l.grammar),n.hooks.run("after-tokenize",l),r.stringify(n.util.encode(l.tokens),l.language)},matchGrammar:function(e,t,r,a,l,i,o){var s=n.Token;for(var u in r)if(r.hasOwnProperty(u)&&r[u]){if(u==o)return;var g=r[u];g="Array"===n.util.type(g)?g:[g];for(var c=0;c<g.length;++c){var h=g[c],f=h.inside,d=!!h.lookbehind,m=!!h.greedy,p=0,y=h.alias;if(m&&!h.pattern.global){var v=h.pattern.toString().match(/[imuy]*$/)[0];h.pattern=RegExp(h.pattern.source,v+"g")}h=h.pattern||h;for(var b=a,k=l;b<t.length;k+=t[b].length,++b){var w=t[b];if(t.length>e.length)return;if(!(w instanceof s)){if(m&&b!=t.length-1){h.lastIndex=k;var _=h.exec(e);if(!_)break;for(var j=_.index+(d?_[1].length:0),P=_.index+_[0].length,A=b,x=k,O=t.length;O>A&&(P>x||!t[A].type&&!t[A-1].greedy);++A)x+=t[A].length,j>=x&&(++b,k=x);if(t[b]instanceof s)continue;I=A-b,w=e.slice(k,x),_.index-=k}else{h.lastIndex=0;var _=h.exec(w),I=1}if(_){d&&(p=_[1]?_[1].length:0);var j=_.index+p,_=_[0].slice(p),P=j+_.length,N=w.slice(0,j),S=w.slice(P),C=[b,I];N&&(++b,k+=N.length,C.push(N));var E=new s(u,f?n.tokenize(_,f):_,y,_,m);if(C.push(E),S&&C.push(S),Array.prototype.splice.apply(t,C),1!=I&&n.matchGrammar(e,t,r,b,k,!0,u),i)break}else if(i)break}}}}},tokenize:function(e,t){var r=[e],a=t.rest;if(a){for(var l in a)t[l]=a[l];delete t.rest}return n.matchGrammar(e,r,t,0,0,!1),r},hooks:{all:{},add:function(e,t){var r=n.hooks.all;r[e]=r[e]||[],r[e].push(t)},run:function(e,t){var r=n.hooks.all[e];if(r&&r.length)for(var a,l=0;a=r[l++];)a(t)}}},r=n.Token=function(e,t,n,r,a){this.type=e,this.content=t,this.alias=n,this.length=0|(r||"").length,this.greedy=!!a};if(r.stringify=function(e,t,a){if("string"==typeof e)return e;if("Array"===n.util.type(e))return e.map(function(n){return r.stringify(n,t,e)}).join("");var l={type:e.type,content:r.stringify(e.content,t,a),tag:"span",classes:["token",e.type],attributes:{},language:t,parent:a};if(e.alias){var i="Array"===n.util.type(e.alias)?e.alias:[e.alias];Array.prototype.push.apply(l.classes,i)}n.hooks.run("wrap",l);var o=Object.keys(l.attributes).map(function(e){return e+'="'+(l.attributes[e]||"").replace(/"/g,"&quot;")+'"'}).join(" ");return"<"+l.tag+' class="'+l.classes.join(" ")+'"'+(o?" "+o:"")+">"+l.content+"</"+l.tag+">"},!_self.document)return _self.addEventListener?(n.disableWorkerMessageHandler||_self.addEventListener("message",function(e){var t=JSON.parse(e.data),r=t.language,a=t.code,l=t.immediateClose;_self.postMessage(n.highlight(a,n.languages[r],r)),l&&_self.close()},!1),_self.Prism):_self.Prism;var a=document.currentScript||[].slice.call(document.getElementsByTagName("script")).pop();return a&&(n.filename=a.src,n.manual||a.hasAttribute("data-manual")||("loading"!==document.readyState?window.requestAnimationFrame?window.requestAnimationFrame(n.highlightAll):window.setTimeout(n.highlightAll,16):document.addEventListener("DOMContentLoaded",n.highlightAll))),_self.Prism}();"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism);
