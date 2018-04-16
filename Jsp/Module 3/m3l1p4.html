@@ -249,57 +249,97 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
-<pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">cookie :</span></div>
 
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
+<p>By using cookie implicit object we can retrieve cookies associated with the request<br/><br/>
+        cookie ----> request.getCookies()<br/><br/>
+        cookie :<br/>
+        Map</p>
+
+<table>
+    <tr>
+        <td>String</td>
+        <td>String</td>
+    </tr>
+     <tr>
+        <td>JSESSSIONID</td>
+        <td>1234</td>
+    </tr>
+     <tr>
+        <td>c1</td>
+        <td>SCJP</td>
+    </tr>
+</table>
+
+<p>cookie.jsp</p>
+<pre ><code class="language-java">&lt;%@page isELIgnored="false" %>
+&lt;%
+Cookie c1=new Cookie("c1","SCJP");
+Cookie c2=new Cookie("c2","SCWCD");
+response.addCookie(c1);
+response.addCookie(c2);
+%>
+&lt;h3>The Cookie Id is :&lt;/h3>
+${cookie.JSESSIONID.name} &lt;br/>
+${cookie.JSESSIONID.value} &lt;br/>
+${cookie.JSESSIONID} &lt;br/>
+Cookie c1 is : ${cookie.c1} &lt;br/>
+Cookie c1 name is : ${cookie.c1.name} &lt;br/>
+Cookie c1 value is : ${cookie.c1.value} &lt;br/>
+Cookie c2 name is : ${cookie.c2.name} &lt;br/>
+Cookie c2 value is : ${cookie.c2.value} &lt;br/></code></pre>
+
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">pageContext :</span></div>
+
 <ul>
-    <li>name</li>
-    <li>property</li>
+    <li>This is only one EL implicit object which matches with jsp implicit object.</li>
+    <li>This is only one EL implicit object which is a non-map object by using this implicit object we
+            can bring all jsp implicit objects into EL.</li>
 </ul>
 
-<p  style="font-weight:bold;color:#212121">name :
-    </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
+<pre ><code class="language-java">&lt;%@page isELIgnored="false" %>
+&lt;% session.setAttribute("course","SCJP"); %>
+${pageContext.request.method} &lt;br/>
+${pageContext.session.id} &lt;br/>
+${pageContext.request.Cookies[0]} &lt;br/>
+${course} &lt;br/>
+${request.method} &lt;br/>
+${session.id} &lt;br/></code></pre>
 
-<p  style="font-weight:bold;color:#212121">property :
-    </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">handling errors :</span></div>
 
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
-
-<pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
-}
-public String getMail() {
-return mail;
-}
-}</code></pre>
+<ul>
+    <li>There is an exception and it was not caught then in this case the request will be forwarded
+            along with exception to the error page URL, here the error page is specified errorPage
+            attribute of page directive and by specified URL.</li>
+    <li>This is so simple because the error page itself is identified by using the implicit object
+            exception, more over in addition to exception object an error page also has the following
+            request attributes available.</li>
+    <li>javax.servlet.error.status-code</li>
+    <li>javax.servlet.error.request-URI</li>
+    <li>javax.servlet.error.servlet-name</li>
+    <li>When ever we use the pageContext.getErrorData() method, it is possible to get an instance
+            of javax.servlet.jsp.Error-Data class</li>
+    <li>This will provide to find a simple way to access the above attributes. (status-code, request-
+            URI, servlet-name)</li>   
+</ul>
 
 <p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
+<pre ><code class="language-java">&lt;%@page isELIgnored="false" %>
+&lt;%@page errorPage="error.jsp" %>
 &lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
-%>
-(OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+out.println(10/0);
+%></code></pre>
+
+<p>error.jsp</p>
+<pre ><code class="language-java">&lt;%@page isErrorPage="false"%>
+The Raised Exception is : ${pageContext.exception.message} &lt;br/>
+The Status code is : ${pageContext.errorData.statusCode} &lt;br/>
+The Request URI is : ${pageContext.errorData.requestURI} &lt;br/>
+The Servlet Name is : ${pageContext.errorData.servletName} &lt;br/></code></pre>
+
+<p>All EL implicit objects are map object type except pageContext.</p>
 
 
 

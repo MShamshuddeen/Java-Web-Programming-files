@@ -249,58 +249,108 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
-<pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Relational operators :</span></div>
+<br/>
+ <table>
+     <tr>
+         <td>&lt;</td>
+         <td>or</td>
+         <td>lt</td>
+     </tr>
+     <tr>
+            <td>&lt;=</td>
+            <td>or</td>                        
+            <td>le</td>
+        </tr>
+     <tr>
+         <td>></td>
+         <td>or</td>
+         <td>gt</td>
+     </tr>
+      <tr>
+         <td>>=</td>
+         <td>or</td>
+         <td>gt</td>
+     </tr>
+      <tr>
+         <td>>=</td>
+         <td>or</td>
+         <td>ge</td>
+     </tr>
+     <tr>
+         <td>==</td>
+         <td>or</td>
+         <td>eq</td>
+     </tr>
+     <tr>
+         <td>=!</td>
+         <td>or</td>
+         <td>ne</td>
+     </tr>
 
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
-<ul>
-    <li>name</li>
-    <li>property</li>
-</ul>
+ </table>
 
-<p  style="font-weight:bold;color:#212121">name :
+ <p>Ex:</p>
+ <pre ><code class="language-java">&lt;%@ page isELIgnored="false"%> </code></pre>
+
+ <p  style="font-weight:bold;color:#212121">Relational operators :
     </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
 
-<p  style="font-weight:bold;color:#212121">property :
-    </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
+    <pre ><code class="language-java">${3 &lt; 4} //true
+${3 > 4} //false
+${3 >= 4} //false
+${3 &lt;= 4} //true
+${"abc" == "abc"} //true
+${2!=1} //true
+${sai == sai} //true
+${3 &lt; sai} //false
+${String &lt; String} //false</code></pre>
+
+<p>In Relational Operators , the unknown variable evaluates as a false.</p>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Logical operators :</span></div>
+
+<br/>
+<table>
+    <tr>
+        <td>&amp;&amp;</td>
+        <td>or</td>
+        <td>and</td>
+    </tr>
+    <tr>
+        <td>||</td>
+        <td>or</td>
+        <td>or</td>
+    </tr>
+    <tr>
+        <td>!</td>
+        <td>pr</td>
+        <td>not</td>
+    </tr>
+</table>
+
+<p>Ex:</p>
+
+
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+${true and true} //true
+${false || false} //false
+${!true} //false
+${ashok &amp;&amp; ashok} //false
+${not ashok} //true</code></pre>
 
 <p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
+    In logical operators unknown variable evaluates false.</p>
 
-<pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
-}
-public String getMail() {
-return mail;
-}
-}</code></pre>
 
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
-&lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
-%>
-(OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+    <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">conditional operator : (?:)</span></div>
 
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+${ (3 &lt; 4)?"yes":"no" } //yes
+${ (true == false)?"Right":"wrong" } //wrong
+${ (2 &lt; 3)?"correct":"wrong" } //correct</code></pre>
+
+<p>In the case of conditional operator unknown variable treats a variable stored in some scope.</p>
 
 
 

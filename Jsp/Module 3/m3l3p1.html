@@ -249,57 +249,105 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
-<pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Arithmetic operators : (+, -, /, *, %)</span></div>
 
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
-<ul>
-    <li>name</li>
-    <li>property</li>
-</ul>
+<p>EL doesn't support operator overloading and + operator always meant for Arithmetic addition but not
+        for String Concatenation.<br/>
+        + operator :</p>
 
-<p  style="font-weight:bold;color:#212121">name :
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+2+3= ${2+3}
+"2"+3= ${"2"+3}
+"2"+'3'= ${"2"+'3'}
+abc+'3'= ${abc+'3'}
+"abc"+'3'= ${"abc"+'3'}
+// java.lang.NullPointerException:For input string: "abc"
+""+3= ${""+'3'}
+// java.lang.NullPointerException:For input string: ""
+null+'3'= ${null+'3'}</code></pre>
+
+<p>- operator :</p>
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+2-3= ${2-3}
+"2"-3= ${"2"-3}
+"2"-'3'= ${"2"-'3'}
+abc-'3'= ${abc-'3'}
+"abc"-'3'= ${"abc"-'3'}
+// java.lang.NullPointerException:For input string: "abc"
+""-3= ${""-'3'}
+// java.lang.NullPointerException:For input string: " "
+null-'3'= ${null-'3'}</code></pre>
+
+
+<p ><span style="font-weight:bold;color:#212121">* operator, / operator : </span>
+    all rules are exactly similar to + operator except that division operator always
+follows floating point Arithmetic.</p>
+
+
+<p  style="font-weight:bold;color:#212121">syntax :
     </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
 
-<p  style="font-weight:bold;color:#212121">property :
+    <pre ><code class="language-java">${a/b} or ${a div b}</code></pre>
+
+<p>Ex :</p>
+<pre ><code class="language-java">${10/2} = 5.0
+${10/0} = Infinity
+${0/0} = NaN</code></pre>
+
+<p  style="font-weight:bold;color:#212121">% operator :
     </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
+
+<p>All rules are exactly similar to + operator here both integral and floating Arithmetics are possible.</p>
+<p  style="font-weight:bold;color:#212121">syntax :
+    </p>
+
+    <pre ><code class="language-java"> ${a%b} or ${a mod b}</code></pre>
+<p>Ex :</p>
+    <pre ><code class="language-java">${10%3} // 1
+${10%0} //java.lang.ArithmeticException: / by zero
+${10.0%0} //NaN
+${""/'3'}
+//java.lang.NumberFormatException: empty String</code></pre>
 
 <p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
+    In Arithmetic operator null evaluates Zero, the presidency of Arithmetic operators *, /, %, +, -.</p>
+
+<p>In side Servlet code :</p>
 
 <pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
-}
-public String getMail() {
-return mail;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+public class ELServletDemo extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+java.util.ArrayList numList = new ArrayList();
+numList.add("1");
+numList.add("2");
+numList.add("3");
+numList.add("4");
+request.setAttribute("numbers", numList);
+String[] s = {"melody","DJ","fast","slow"};
+request.setAttribute("musicList", s);
+RequestDispatcher rd = request.getRequestDispatcher("view.jsp");
+rd.forward(request, response);
 }
 }</code></pre>
 
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
-&lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
-%>
-(OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+<p>view.jsp</p>
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+${musicList[numbers[0]]} &lt;br/>
+${musicList[numbers[1]+2]} &lt;br/>
+${musicList[numbers[numbers[0]]+1]} &lt;br/>
+${musicList[numbers["2"]]} &lt;br/></code></pre>
+
+
+
+
 
 
 

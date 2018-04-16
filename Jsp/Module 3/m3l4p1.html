@@ -249,57 +249,86 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
-<pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">EL Functions :</span></div>
 
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
-<ul>
-    <li>name</li>
-    <li>property</li>
-</ul>
+<p>1. The main objective of EL is separate code from the jsp<br/>
+        2. If we are having any business functionality separate in to a java class and we can invoke this
+        functionality through EL syntax.<br/>
+        3. The page designer has to know only function name, tld file uri to get its functionality hence EL
+        is alternative to custom tags.</p>
+    
+<p>Designing EL function application contains the following stages :<br/><br/>
+        1. Writing a java class with required functionality.<br/>
+        2. Writing a TLD file to map a java class to Jsp<br/>
+        3. Write a taglib directive to make business functionality available to Jsp.<br/>
+        4. Write EL function call.</p>
 
-<p  style="font-weight:bold;color:#212121">name :
+        <p  style="font-weight:bold;color:#212121">Writing a java class :
+            </p>
+
+<p>1. Any java class can act as a repository for EL functions , the only requirement of the method
+        that act as a functions it should be public and static.<br/>
+        2. The method can take parameter also, there are no restriction on return type even void return
+        type is also allowed.</p>
+
+ <p  style="font-weight:bold;color:#212121">Writing a TLD file : (tag library descriptor file)
+        </p>
+
+<p>TLD file is a xml file which provides mapping between java class (where functionality is available) and
+        jsp (where functionality is required)</p>
+
+     <p  style="font-weight:bold;color:#212121">We can configure EL function by using function tag in TLD file , it contains the following 4 steps :
+        </p>
+
+<p>1. description : It is an optional tag<br/>
+        2. name : By means of this name only wecan call EL functionality in jsp ( this name need not be
+        same as original method name, it is a logical name)<br/>
+        There is no &lt;function-name> tag to configure EL function .<br/>
+        3. function-class : The fully qualified name of java class where EL function defined.<br/>
+        4. function-signature : The signature of EL function which is defined in java class , here we have
+        to specified return type, method name and argument list.</p>
+
+ <p  style="font-weight:bold;color:#212121">Writing a taglib directive :
+        </p>
+    
+<p>We have to declare taglib directive in the jsp to provide location of the TLD file</p>
+<pre ><code class="language-java">&lt;%@taglib prefix="mime" uri="www.awwalsoft.com" %></code></pre>
+
+<p  style="font-weight:bold;color:#212121">Writing EL function call :
     </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
+    <pre ><code class="language-java">${mime.getBalance(435678)}</code></pre>
 
-<p  style="font-weight:bold;color:#212121">property :
-    </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
+<p>demo.jsp</p>
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+&lt;%@taglib prefix="mime" uri="DiceFunctions"%>
+Your 3 - Digit Lucky Number :
+${mime:rollIt()} &lt;br/>
+${mime:rollIt()} &lt;br/>
+${mime:rollIt()} &lt;br/></code></pre>
 
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
-
+<p>DiceRoller.java</p>
 <pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
+public class DiceRoller {
+public DiceRoller() {
+System.out.println("DiceRoller");
 }
-public String getMail() {
-return mail;
+public static int rollDice() {
+return (int) (Math.random() *6+1);
 }
 }</code></pre>
 
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
-&lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
-%>
-(OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+<p>myTld.tld</p>
+<pre ><code class="language-java">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;taglib version="2.1" >
+&lt;tlib-version>1.0&lt;/tlib-version>
+&lt;uri>DiceFunctions&lt;/uri>
+&lt;functions>
+&lt;name>rollIt&lt;/name>
+&lt;function-class>foo.DiceRoller&lt;/function-class>
+&lt;function-signature>int rollDice()&lt;/function-signature>
+&lt;/functions>
+&lt;/taglib></code></pre>
+
 
 
 

@@ -249,59 +249,98 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
-<pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">Introduction</span></div>
 
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
 <ul>
-    <li>name</li>
-    <li>property</li>
+    <li>E-L introduced in Jsp 2.0v , the main objective of EL is to eliminate java code from the jsp.</li>
+    <li>In general we can use EL with JSTL and custom tags for complete elimination of java code from
+            the jsp.</li>
+    <li>EL expressions are always with in { } and prefixed with $ (dollar) sign</li>
+    <li>syntax:</li>
+    <li>${leftVatiable.rightVariable}</li>
+    <li>The leftVariable can be any EL implicit objects/attributes stored in some scopes (page scope,
+            request scope, session scope, application scope)</li>
 </ul>
+<ol>
+    <li>EL Implicit Objects (11)</li>
+    <li>EL Operators</li>
+    <li>EL Functions</li>
+</ol>
+<p>To print the value of request parameter "user" in jsp, write the code ?</p>
+<pre ><code class="language-java">&lt;%= request.getparameter("user") %>
+// is equivalent code
+${param.user} </code></pre>
 
-<p  style="font-weight:bold;color:#212121">name :
-    </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
+<p>To print the value of session scoped attribute "x" in jsp ?</p>
+<pre ><code class="language-java">&lt;%= session.getAttribute("x") %>
+// is equivalent code
+${sessionScope.x}</code></pre>
 
-<p  style="font-weight:bold;color:#212121">property :
-    </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
+<p>To use any variable x in EL compulsory it should be an attribute of some scope ?</p>
+<pre ><code class="language-java">${x}</code></pre>
 
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
+<p>It prints the value of x attribute present in any scope(pageScope, requestScope, sessionScope,
+        applicationScope) and if there is no such attribute then it prints BlankSpace but not null</p>
 
-<pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
-}
-public String getMail() {
-return mail;
-}
-}</code></pre>
-
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
-&lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
+<p>Ex 1:</p>
+<pre ><code class="language-java">&lt;%!
+int x = 10;
 %>
-(OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+The value of x is : ${x}
+output :
+The value of x is : //BlankSpace</code></pre>
 
+<p>Ex 2:</p>
+<pre ><code class="language-java">&lt;%@page isELIgnored="false" %>
+&lt;%! int x=10; %>
+&lt;% pageContext.setAttribute("x",x); %>
+The value of x is : ${x}
+output :
+The value of x is : 10</code></pre>
 
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">EL Implicit Objects (11) :</span></div>
+
+<p>EL contains 11 implicit objects<br/><br/>
+        The power of EL is just because of these implicit objects only.<br/><br/>
+        The following is the list of EL implicit objects</p>
+
+<table>
+    <tr>
+        <td>1. pageScope<br/>
+                2. requestScope<br/>
+                3. sessionScope<br/>
+                4. applicationScope</td>
+        <td>----></td>
+        <td>map objects to retrieve scoped attributes</td>
+    </tr>
+    <tr>
+        <td>5. param<br/>
+                6. paramValues</td>
+        <td>----></td>
+        <td>map objects to retrieve form parameters</td>
+    </tr>
+    <tr>
+        <td>7. header<br/>
+                8. headerValues</td>
+        <td>----></td>
+        <td>map objects to retrieve request headers</td>
+    </tr>
+    <tr>
+        <td>9. cookie</td>
+        <td>----></td>
+        <td>map objects to retrieve cookies</td> 
+    </tr>
+    <tr>
+        <td>10. initParam</td>
+        <td>----></td>
+        <td>map objects to retrieve context parameters</td>
+    </tr>
+    <tr>
+        <td>11. pageContext</td>
+        <td>----></td>
+        <td>java bean object (it is not a map)</td>
+    </tr>
+</table>
 
 
 </div>

@@ -249,57 +249,112 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
-<pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">EL Operators :</span></div>
 
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
+<p>EL contains it's own specific operators the following is list of all possible operators</p>
 <ul>
-    <li>name</li>
-    <li>property</li>
+    <li>property access operator ( . )</li>
+    <li>collection access operator []</li>    
+    <li>Arithmetic operators ( +, -, *, /, % )</li>    
+    <li>Relational operators ( lt, gt, eq, ne ) OR ( &lt;, >, &lt;=, >=, ==, =!)</li>    
+    <li>Logical operators ( and, or, not )</li>    
+    <li>conditional operator ( ?: )</li>    
+    <li>empty operator ( empty )</li>     
 </ul>
 
-<p  style="font-weight:bold;color:#212121">name :
-    </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">property access operator :</span></div>
+<pre ><code class="language-java">${leftVariable.rightVariable}
+// map -----key
+// bean ----property
+// left attribute stored in some scope</code></pre>
 
-<p  style="font-weight:bold;color:#212121">property :
-    </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
+<ul>
+    <li>If the expression has a variable followed by . (dot) , the left variable must be a map or bean.</li>
+    <li>The thing to the right of the . (dot) must be a key or bean property.</li>
+</ul>
+
+<p>The thing on the right must follow normal java naming rules for the identifies.</p>
+
+<pre ><code class="language-java">${person.name}
+// name must starts with letter or underscore or $
+// after the first character we can include the numbers
+// can't be a java keyword
+${initParam.age}
+//map ---- key
+${person.dog}
+//bean ---- property
+${person.1}
+//javax.el.ELExpeption:ErrorParsing</code></pre>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">collection access operator :</span></div>
+
+<pre ><code class="language-java">${leftVariable.rightVariable}
+// Map -----key //quotes are mandatory
+// Bean ----property //quotes are mandatory
+// List ---- index //quotes are optional
+// Array ---- index //quotes are optional</code></pre>
+
+
+<p>When we use the . operator the thing on the left can be only a Map or Bean and thing on the right
+        must follow java naming rules for the identifies but with collection access operator, the thing on the
+        left can also be a List or Array that also meaning the thing on the right can be a number or any thing
+        that resolves to a number or an identifier that doesn't java naming rules.</p>
+
+
+<p>Ex :</p>
+
+<pre ><code class="language-java">${musicMap[MusicTypes[0]]}
+(OR)
+${musicMap[MusicTypes["0"]]}</code></pre>
+
+
+<p>But you can't</p>
+<pre ><code class="language-java">${musicMap[MusicTypes["zero"]]}
+// It can't convert into int</code></pre>
+
+
+<h4>Map Example :</h4>
+<pre ><code class="language-java">${initParam['mail']}
+${initParam['age']}
+${initParam['name']}
+${initParam[age]}
+&lt;%-- blank space --%></code></pre>
+
 
 <p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
+    If we are not using code symbol then it is treated as attribute if the specified attribute is not
+    available then we will get blank space.</p>
 
+
+<p>Bean in servlet code :</p>
 <pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
-}
-public String getMail() {
-return mail;
+import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+public class ELServletDemo extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+foo.Person p = new foo.Person();
+p.setName("Akshay");
+foo.Dog d = new Dog();
+d.setName("puppy");
+p.setDog(d);
+request.setAttribute("person", p);
+RequestDispatcher rd = request.getRequestDispatcher("view.jsp");
+rd.forward(request, response);
 }
 }</code></pre>
 
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
-&lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
-%>
-(OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+<p>view.jsp</p>
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+${person['dog']['name']}
+${person[dog][name]} //blankspace</code></pre>
+
+
+
 
 
 

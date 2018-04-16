@@ -249,57 +249,112 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
-<pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
-
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
-<ul>
-    <li>name</li>
-    <li>property</li>
-</ul>
-
-<p  style="font-weight:bold;color:#212121">name :
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">empty operator :</span></div>
+<p  style="font-weight:bold;color:#212121">syntax :
     </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
+<pre ><code class="language-java">${empty obj}</code></pre>
+<p>returns true iff object doesn't exists/ an empty array/ object is an empty collection/ object as a empty
+        String in all other cases it returns false.</p>
+<p>Ex:</p>
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+&lt;%@page import="java.util.ArrayList"%>
+&lt;%ArrayList l=new ArrayList(); %>
+${empty test} //true
+${empty "durga"} //false
+${empty null} //true
+${empty " "} //false
+${empty l} //true</code></pre> 
 
-<p  style="font-weight:bold;color:#212121">property :
-    </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
-
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
-
+<p>In Servlet code :</p>
 <pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
-}
-public String getMail() {
-return mail;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+public class ELServletDemo extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+int num = 2;
+request.setAttribute("num", num);
+Integer I = new Integer(3);
+request.setAttribute("integer", i);
+java.util.ArrayList list = new ArrayList();
+list.add("true");
+list.add("false");
+list.add("5");
+list.add("6");
+request.setAttribute("list", list);
+RequestDispatcher rd = request.getRequestDispatcher("jspDemo.jsp");
+rd.forward(request, response);
 }
 }</code></pre>
+<p>view.jsp</p>
+<pre ><code class="language-java">&lt;%@ page isELIgnored="false"%>
+&lt;jsp:useBean id="myDog" class="foo.Dog">
+&lt;jsp:getProperty name="myDog" property="name" />
+&lt;/jsp:useBean>
+${myDog.name and true} //false
+${requestScope["integer"] ne 4 and 6 le num or false} //false
+//EL executes left to right</code></pre>
 
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
-&lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
-%>
-(OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">EL operator presidency :</span></div>
+<p>1. unary (! , empty )<br/>
+        2. Arithmetic ( *, /, %, +, - )<br/>
+        3. Relational ( &lt;, >, &lt;=, >=, ==, =!)<br/>
+        4. Logical ( &amp;&amp;, || )<br/>
+        5. conditional operator ( ?: )</p>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">EL reserved words :</span></div>
+<br/>
+<table>
+    <tr>
+    <td>lt<br/>
+            gt<br/>
+            le<br/>
+            ge<br/>
+            ne<br/>
+            eq</td>
+    <td><br/>true<br/>
+            false<br/>
+            and<br/>
+            or<br/>
+            not</td>
+    <td><br/><br/>instanceof<br/>
+            empty<br/>
+            null</td>
+    <td><br/><br/><br/>div<br/>
+            mod</td>
+
+            </tr>
+</table>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">EL Vs null :</span></div>
+
+<p>1. EL behavior very nicely with null, in Arithmetic operator null is treated as a zero.<br/>
+        2. With String evaluation null is treated as empty String (" ")<br/>
+        3. With logical operators null is treated as false<br/>
+        4. In the case of empty operator null is treated as true<br/>
+        5. In the case of relational operator null is treated as false</p>
+
+<p>Assume that there is no attribute named with "foo" but there is an attribute named with "bar" but
+        bar doesn't have any property or key name "foo"</p>
+
+
+<ul>
+    <li>${foo} // BlankSpace</li>
+    <li>${foo[bar]} // BlankSpace</li>
+    <li>${bar[foo]} // BlankSpace</li>
+    <li>${foo.bar} // BlankSpace</li>
+    <li>${7/foo} // Infinity</li>
+    <li>${7%foo} // java.lang.ArithmeticException</li>
+    <li>${true and false} // false</li>
+    <li>${true or false} // true</li>
+    <li>${not foo} // true</li>
+    
+</ul>
 
 
 

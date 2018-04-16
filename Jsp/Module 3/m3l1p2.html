@@ -249,57 +249,224 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
-<pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">pageScope, requestScope, sessionScope, applicationScope</span></div>
+<br/><br/>
+<table>
+    <tr>
+        <td>1. pageScope</td>
+        <td>----></td>
+        <td>pageContext.getAttribute()</td>
+    </tr>
+    <tr>
+        <td>2. requestScope</td>
+        <td>----></td>
+        <td>request.getAttribute()</td>
+    </tr>
+    <tr>
+        <td>3. sessionScope</td>
+        <td>----></td>
+        <td>session.getAttribute()</td>
+    </tr>
+    <tr>
+        <td>4. applicationScope</td>
+        <td>----></td>
+        <td>application.getAttribute()</td>
+    </tr>
+</table>
 
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
-<ul>
-    <li>name</li>
-    <li>property</li>
-</ul>
+<p>Ex : To print the value of session scoped attribute "x"</p>
+<pre ><code class="language-java">${sessionScope.x}</code></pre>
 
-<p  style="font-weight:bold;color:#212121">name :
-    </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
+<p>Ex : To print the value of request scoped attribute "x"</p>
+<pre ><code class="language-java">${requestScope.x} </code></pre>
 
-<p  style="font-weight:bold;color:#212121">property :
-    </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
+<p>Ex :</p>
+<pre ><code class="language-java">${sessionScope.x}</code></pre>
+
+<p>It prints the value of session scoped attribute "x" , in sessionScope if there is no such attribute then
+        we will get BlankSpace</p>
+<p>Ex :</p>
+<pre ><code class="language-java">${x}</code></pre>
+
+<p>jsp engine first checks in pageScope for attribute "x" if it is available then it prints the value, then it's
+        not available it will check in requestScope followed by sessionScope and applicationScope, it simply
+        act as pageContext.findAttribute(x);</p>
+
+<p>scopes.jsp</p>
 
 <p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
+    ${leftVariable.rightVariable}</p>
+
+<ul>
+    <li>If leftVariable is a map then rightVariable should be "key", If the specified key is not available
+            then we will get BlankSpace as a output.</li>
+    <li>If leftVariable is a bean then rightVariable should be "property", If the specified property is
+            not available then we will get "PropertyNotFoundException".</li>
+</ul>
+
+<pre ><code class="language-java">${person.empId}
+// here person attribute stored in some scope</code></pre>
+
+<p>In Servlet code :</p>
 
 <pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
-}
-public String getMail() {
-return mail;
+import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+public class ELServletDemo extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+foo.Person p = new foo.Person();
+p.setName("Akshay");
+foo.Dog d = new Dog();
+d.setName("puppy");
+p.setDog(d);
+request.setAttribute("person", p);
+request.setAttribute("arun", "SCWCD");
+RequestDispatcher rd = request.getRequestDispatcher("demo.jsp");
+rd.forward(request, response);
 }
 }</code></pre>
 
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
-&lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
-%>
-(OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+<p>in Jsp code :</p>
+
+<pre ><code class="language-java">${requestScope.arun}
+${requestScope.person.dog.name}
+&lt;%-- ${person.dog.name} --%></code></pre>
+
+<p  style="font-weight:bold;color:#212121">Note:
+    </p>
+
+<ul>
+    <li>use requestScope implicit object to get request scoped attributes but not request parameters.</li>
+    <li>If we want request properties then we should go for pageContext EL implicit object.</li>
+</ul>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">param &amp; paramValues :</span></div>
+<p>We can use these implicit objects to retrieve form parameter values</p>
+
+<table>
+    <tr>
+        <td>1. param</td>
+        <td>----></td>
+        <td>request.getParameter()</td>
+    </tr>
+    <tr>
+        <td>2. paramValues</td>
+        <td>----></td>
+        <td>request.getParameterValues()</td>
+    </tr>
+</table>
+
+<p>${param.x} // it prints the value of form parameter x, if the specified parameter is not available then
+        we will get BlankSpace<br/>
+        If parameter associated with multiple values then we will get first value.</p>
+
+<p>param :<br/>
+        Map</p>
+
+<table>
+    <tr>
+        <td>String</td>
+        <td>String</td>
+    </tr>
+    <tr>
+        <td>uname</td>
+        <td>ashok</td>
+    </tr>
+    <tr>
+        <td>course</td>
+        <td>scwcd</td>
+    </tr>
+    <tr>
+        <td>place</td>
+        <td>hyd</td>
+    </tr>
+</table>
+
+<p>paramValues :
+    <br/>
+        Map</p>
+<table>
+    <tr>
+        <td>String</td>
+        <td>String[]</td>
+    </tr>
+    <tr>
+            <td>uname</td>
+            <td>{ashok, arun, akshay}</td>
+        </tr>
+    <tr>
+        <td>course</td>
+        <td>{scjp, scwcd}</td>
+    </tr>
+    <tr>
+        <td>place</td>
+        <td>{hyd}</td>
+    </tr>
+</table>
+
+<p>${paramValues.uname}<br/>
+        // String[] will be returns on that Object class toString() is called.</p>
+
+
+<table>
+    <tr>
+        <td>${ paramValues.uname[0] }</td>
+        <td>---></td>
+        <td>ashok</td>
+    </tr>
+     <tr>
+        <td>${ paramValues.uname[100] }</td>
+        <td>---></td>
+        <td>BlankSpace</td>
+    </tr>
+     <tr>
+        <td>${ paramValues.user }</td>
+        <td>---></td>
+        <td>BlankSpace</td>
+    </tr>
+</table>
+
+<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
+    EL handles null and ArrayIndexOutOfBoundException very nicely and prints BlankSpace.</p>
+
+<p>form.html</p>
+<pre ><code class="language-java">&lt;h3>Enter Your Details :&lt;/h3>
+&lt;form action="formParam.jsp" method="post">
+Enter Name :&lt;input type="text" name="name" > &lt;br>
+Enter Mail :&lt;input type="text" name="mail" > &lt;br>
+Enter Age:&lt;input type="text" name="age" > &lt;br>
+Enter Food 1 :&lt;input type="text" name="food" > &lt;br>
+Enter Food 2 :&lt;input type="text" name="food" > &lt;br>
+&lt;input type="submit" value="Submit"> &lt;br>
+&lt;/form></code></pre>
+
+<p>formParam.jsp</p>
+<pre ><code class="language-java">&lt;%@page isELIgnored="false"%>
+&lt;h3>Form Parameter Values :&lt;/h3>
+Name : ${param.name} &lt;br/>
+Mail : ${param.mail} &lt;br/>
+Age : ${param.age} &lt;br/>
+Food : ${param.food} &lt;br/>
+Sex : ${param.sex} &lt;br/>
+ParamValues.name : ${paramValues.name} &lt;br/>
+ParamValues.name[0] : ${paramValues.name[0]} &lt;br/>
+ParamValues.name[1] : ${paramValues.name[1]} &lt;br/>
+ParamValues.food : ${paramValues.food} &lt;br/>
+ParamValues.food[0] : ${paramValues.food[0]} &lt;br/>
+ParamValues.food[1] : ${paramValues.food[1]} &lt;br/>
+ParamValues.food[100] : ${paramValues.food[100]} &lt;br/></code></pre>
+
+
+
+
+
+
+
 
 
 

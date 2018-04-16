@@ -249,57 +249,111 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">&lt;jsp:getProperty> :</span></div>
-<p>This tag can be used to get the properties of bean object</p>
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">header &amp; headerValues :</span></div>  
+
+<p>These are exactly similar to param and paramValues except that these are retrieving request headers.</p>
+<table>
+    <tr>
+        <td>1. header</td>
+        <td>----></td>
+        <td>request.getHeader()</td>
+    </tr>
+    <tr>
+        <td>2. headerValues</td>
+        <td>----></td>
+        <td>request.getHeaders()</td>
+    </tr>
+</table>
+<p>If the specified request header is not available you will get BlankSpace as a output.</p>
+
+<table>
+    <tr>
+        <td>${ header.x }</td>
+        <td>---></td>
+        <td>BlankSpace</td>
+    </tr>
+    <tr>
+        <td>${ header.host }</td>
+        <td>---></td>
+        <td>localhost:2020</td>
+    </tr>
+     <tr>
+        <td>${ headerValues.host }</td>
+        <td>---></td>
+        <td>java.lang.String@1234</td>
+    </tr>
+</table>
+<p>header.jsp</p>
+<pre ><code class="language-java">&lt;%@page isELIgnored="false"%>
+&lt;h3>Header Information :&lt;/h3>
+Accept : ${header.accept}&lt;br/>
+Accept Values [0] : ${headerValues.accept[0]} &lt;br/>
+Accept Values [1] : ${headerValues.accept[1]} &lt;br/>
+Host : ${header.host} &lt;br/>
+Host [0] : ${headerValues.host[0]} &lt;br/>
+Some x is : ${header.x} &lt;br/>
+Accept Language : ${header['accept-language']} &lt;br/>&lt;br/></code></pre>
+<br/>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">initParam :</span></div>
+
+
+<p>By using initParam implicit object we can access ServletContext parameters but not servlet
+        initialization parameters.<br/><br/>
+        initParam ---> application.getInitParameter()<br/><br/>
+        ${initParam.user} // it prints the value associated associated with context parameter user.<br/><br/>
+        If the specified parameter is not available then we will get BlankSpace.</p>
+
+
+<pre ><code class="language-java">${initParam.x} //BlankSpace</code></pre>
+
+<p>initParam.jsp</p>
+<pre ><code class="language-java">&lt;%@page isELIgnored="false" %>
+&lt;h3>Init Parameters are :&lt;/h3>
+Init Param Name : ${initParam.name} &lt;br/>
+Init Param Mail : ${initParam.mail} &lt;br/>
+Init Param Age : ${initParam.age} &lt;br/>
+The X value is : ${initParam.x} &lt;br/>
+The Y value is : ${initParam.y} &lt;br/></code></pre>
+
+<p>web.xml</p>
+<pre ><code class="language-java">&lt;display-name>EL Implicit Objects&lt;/display-name>
+&lt;context-param>
+&lt;param-name>name&lt;/param-name>
+&lt;param-value>Ashok&lt;/param-value>
+&lt;/context-param>
+&lt;context-param>
+&lt;param-name>mail&lt;/param-name>
+&lt;param-value>admin@awwalsoft.com&lt;/param-value>
+&lt;/context-param>
+&lt;context-param>
+&lt;param-name>age&lt;/param-name>
+&lt;param-value>2022&lt;/param-value>
+&lt;/context-param>
+&lt;context-param>
+&lt;param-name>x&lt;/param-name>
+&lt;param-value>12345&lt;/param-value>
+&lt;/context-param>
+&lt;context-param>
+&lt;param-name>y&lt;/param-name>
+&lt;param-value>54321&lt;/param-value>
+&lt;/context-param></code></pre>
+
+<p>To print the value of "userName" cookie ?</p>
 <pre ><code class="language-java">&lt;%
-CustomerBean c = new CustomerBean();
-out.println(c.getName());
-%>
-//equalant jsp
-&lt;jsp:useBean id="c" class="CustomerBean" />
-&lt;jsp:getProperty name="c" property="name" /></code></pre>
-
-<p>&lt;jsp:getProperty> tag contains the following 2 attributes</p>
-<ul>
-    <li>name</li>
-    <li>property</li>
-</ul>
-
-<p  style="font-weight:bold;color:#212121">name :
-    </p>
-<p>It represents name of the bean object reference variable from which the required property has to
-        retrieve , it is exactly equal to id attribute of &lt;jsp:useBean>.</p>
-
-<p  style="font-weight:bold;color:#212121">property :
-    </p>
-<p>It represents the name of the java bean property whose value has to retrieve.</p>
-
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    both attributes are mandatory attributes.</p>
-
-<pre ><code class="language-java">package foo;
-public class CustomerBean {
-private String name = "ashok";
-private String mail = "ashok@jobs4times.com";
-public String getName() {
-return name;
+Cookie[] c=request.getCookies();
+for(int i=0;i<c.length;i++) {
+if(c[i].getName().equals("userName")) {
+out.println(c[i].getValue());
 }
-public String getMail() {
-return mail;
 }
-}</code></pre>
-
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@page import="foo.CustomerBean" %>
-&lt;%
-CustomerBean c=new CustomerBean();
-out.println("The customer name is :"+c.getName());
-out.println("The customer mail is :"+c.getMail());
 %>
 (OR)
-&lt;jsp:useBean id="c" class="foo.CustomerBean"/>
-The Customer name is : &lt;jsp:getProperty property="name" name="c"/>
-The Customer mail is : &lt;jsp:getProperty property="mail" name="c"/></code></pre>    
+&lt;%@page isELIgnored="false" %>
+Cookie value is : ${cookie.userName.value} &lt;br/></code></pre>
+
+
+
 
 
 
