@@ -249,177 +249,170 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-      
-<div style="text-align: left; background:#696969; padding:7px;">
-    <span style="font-weight:bold;color:#ffffff">
-            BodyTag (I) :
+    <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+            DynamicAttributes :
     </span></div>
 
-    <ul>
-        <li>It is the child interface of IterationTag</li>
-        <li>If we want to manipulate the body then we should go for BodyTag interface.</li>
-        <li>BodyTag interface defines the following 2 extra methods
-            <ol>
-                <li>public void setBodyContent(BodyContent bodyContent)</li>
-                <li>public void doInitBody() throws JspException</li>
-            </ol>
-        </li>
-        <li>BodyTag interface defines the following 2 extra constants
-            <ol>
-            <li>EVAL_BODY_BUFFERED</li>
-            <li>EVAL_BODY_TAG (deprecated)</li>
-        </ol>
-        </li>
-        
-    </ul>
+<ul>
+    <li>In general tags can contain attributes for which we have to declare in the tld file by using attribute
+            tag for these attributes we have to maintain one instance variable and corresponding setter
+            methods in tag handler class such type of attributes are calling static attributes.</li>
+    <li>But we can use attributes even though tld file doesn't contain any &lt;attribute> tag declaration such
+            type of attributes are called dynamic attributes.</li>
+    <li>Dynamic attributes concept applicable for both classic and simple tag models</li>
+    <li>Dynamic attributes concept introduced jsp2.0v</li>    
+</ul>
 
+<p>To support Dynamic attribute concept we have to do the following things :<br/><br/>
+        1. In the tld file we have to declare &lt;dynamic-attributes> tag</p>
+
+<pre ><code class="language-java">&lt;taglib version="2.1">
+&lt;tlib-version>1.2&lt;/tlib-version>
+&lt;uri>www.awwalsoft.com&lt;/uri>
+&lt;tag>
+.....................................
+&lt;dynamic-attributes>true&lt;/dynamic-attributes>
+.....................................
+&lt;/tag>
+&lt;/taglib></code></pre>
+
+<p>2. The corresponding tag handler class should implements DynamicAttributes interface, this
+        interface introduced jsp2.0v and contains only one method.</p>
     
-<div style="text-align: left; background:#696969; padding:7px;">
-    <span style="font-weight:bold;color:#ffffff">BodyContent (AC) :</span></div>
-
-<ul>
-    <li>We can use this BodyContent object to hold tag body</li>
-    <li>BodyContent class is the child class of JspWriter</li>
-    <li>BodyContent class is an abstract class and vendor is responsible to provide implementation</li>
-</ul>
-
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    BodyContent class object act as a buffer for tag body , if we want to manipulate that tag body,
-    first we have to retrieve that tag body from the BodyContent object , for that BodyContent class
-    defines the following methods</p>
-
-<p>1. public String getString() : returns tag body in the form of String.<br/>
-        2. public Reader getReader() : return a Reader object to extract tag body.<br/>
-        3. public JspWriter getEnclosingWriter() : It returns JspWriter to print data to the jsp page.<br/>
-        4. public void ClearBody() : To clear body present in BodyContent object i.e., entire tag body
-        present in BodyContent will be removed.</p>
+        <pre ><code class="language-java">public void setDynamicAttribute(String nameSpace, String name,Object value)
+throws JspException{}</code></pre>
 
 
-<div style="text-align: left; background:#696969; padding:7px;">
-    <span style="font-weight:bold;color:#ffffff">
-            Flow Chart of BodyTag interface :
-    </span></div>
-
-<img src="m5l4p1_image1.png" />
-
-
-<div style="text-align: left; background:#696969; padding:7px;">
-    <span style="font-weight:bold;color:#ffffff">
-            Life Cycle of BodyTag interface :
-    </span></div>
-
-<ul>
-    <li>Life Cycle of BodyTag interface is exactly similar to IterationTag handler, and difference is
-            doStartTag() returns either EVAL_BODY_INCLUDE or EVAL_BODY_BUFFERED.</li>
-    <li>If the method returns EVAL_BODY_BUFFERED and tag contains body then jsp engine creates
-            BodyContent object and invoke setBodyContent() by passing BodyContent object as a
-            argument followed by doInitBody().</li>
-</ul>
-
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    we can write a logic to manipulate the tag body with in doAfterBody()</p>
-
-
-<p>setBodyContent(-) and doInitBody() won't be executed in the following cases<br/><br/>
-        case 1 : If doStartTag() returns either EVAL_BODY_INCLUDE or SKIP_BODY.<br/><br/>
-        CASE 2 : If doStartTag() returns either EVAL_BODY_BUFFERED and tag doesn't contain body.</p>
-
-        <div style="text-align: left; background:#696969; padding:7px;">
-            <span style="font-weight:bold;color:#ffffff">
-                    Implementation of BodyTagSupport class :
-            </span></div>
-
-<ul>
-    <li>This class extends TagSupport class and implements BodyTag interface.</li>
-    <li>This class provides default implementation for all 9 methods available in BodyTag interface.</li>
-    <li>It is very easy to write Tag handler class by extending BodyTagSupport class instead of
-            implementing BodyTag interface directly.</li>
-    <li>In this case we have to provide implementation only for required methods but not for all 9
-            methods.</li>
-    
-</ul>
-
-<p  style="font-weight:bold;color:#212121">Internal Implementation of BodyTagSupport class :
-    </p>
-
-<p>BodyTagSupport.java</p>
-<pre ><code class="language-java">import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTag;
-import javax.servlet.jsp.tagext.TagSupport;
-public class BodyTagSupport extends TagSupport implements BodyTag{
-private static final long serialVersionUID = 1L;
-protected BodyContent bodyContent;
-@Override
-public void setBodyContent(BodyContent bodyContent){
-this.bodyContent=bodyContent;
-}
-@Override
-public void doInitBody(){
-System.out.println(" doInitBody method");
-}
-@Override
-public int doStartTag() throws JspException{
-return EVAL_BODY_BUFFERED;
-}
-}</code></pre>
-
-
-<ul>
-    <li>pageContext, bodyContent variables are by default available to our tag handler classes we can
-            use directly.</li>
-    <li>The default return type doStartTag() in BodyTagSupport is EVAL_BODY_BUFFERED,
-            doAfterBody() is SKIP_BODY and doEndTag is EVAL_PAGE.</li>
-</ul>
-
-<p  style="font-weight:bold;color:#212121">Write a demo program for the usage of BodyTagSupport class
-    </p>
+<p>For every DynamicAttribute this method will be executed</p>
 <p>test.jsp</p>
 <pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;mine:myTag>
-This is Body Tag Support Demo body &lt;br>
-&lt;/mine:myTag></code></pre>
+This is before Custom Tag &lt;br>
+&lt;mine:myTag name="Nandu" wife="Renu" brother="Tinku" habbits="sleep,lunch"/>
+This is rest of the Jsp page</code></pre>
 
-<p>BodyTagSupportDemo.java</p>
+<p>DynamicAttributesDemo.java</p>
 <pre ><code class="language-java">package com.tag;
 import java.io.IOException;
+import java.util.HashMap;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-public class BodyTagSupportDemo extends BodyTagSupport{
+import javax.servlet.jsp.tagext.DynamicAttributes;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+public class DynamicAttributesDemo extends SimpleTagSupport
+implements DynamicAttributes{
 private static final long serialVersionUID = 1L;
+HashMap h=new HashMap();
 @Override
-public int doAfterBody() throws JspException{
-JspWriter out=null;
-try{
-String data=bodyContent.getString();
-data=data.toUpperCase();
-out=bodyContent.getEnclosingWriter();
-out.println(data);
+public void setDynamicAttribute(String nameSpace,
+String name,Object value) throws JspException{
+h.put(name, value);
 }
-catch(IOException e){
-    e.printStackTrace();
-}
-return SKIP_BODY;
+@Override
+public void doTag() throws JspException, IOException {
+JspWriter out=getJspContext().getOut();
+out.println(h +"&lt;br>");
 }
 }</code></pre>
 
 <p>myTld.tld</p>
-<pre ><code class="language-java">&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
+<pre ><code class="language-java">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
 &lt;tlib-version>1.2&lt;/tlib-version>
 &lt;uri>www.awwalsoft.com&lt;/uri>
 &lt;tag>
 &lt;name>myTag&lt;/name>
-&lt;tag-class>com.tag.BodyTagSupportDemo&lt;/tag-class>
+&lt;tag-class>com.tag.DynamicAttributesDemo&lt;/tag-class>
+&lt;body-content>scriptless&lt;/body-content>
+&lt;dynamic-attributes>true&lt;/dynamic-attributes>
 &lt;/tag>
 &lt;/taglib></code></pre>
 
-<p>web.xml</p>
-<pre ><code class="language-java">Same as previous</code></pre>
+<p>web.xml<br/>
+        Same as previous</p>
 
 <p  style="font-weight:bold;color:#212121">Output:
-    </p>
-<p>THIS IS BODY TAG SUPPORT DEMO BODY</p>
+        </p>
+<p>This is before Custom Tag<br/>
+        {wife=Renu, name=Nandu, brother=Tinku, habbits=sleep,lunch}<br/>
+        This is rest of the Jsp page</p>
+
+
+<p  style="font-weight:bold;color:#212121">Combination of static &amp; dynamic attributes :
+        </p>
+
+<p>index.jsp</p>
+<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
+This is before Custom Tag &lt;br>
+&lt;mine:myTag num="2" min="5" max="10" pow="3"/>
+This is rest of the Jsp page</code></pre>
+
+<p>DynamicAttributesDemo.java</p>
+<pre ><code class="language-java">package com.tag;
+import java.io.IOException;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.DynamicAttributes;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+public class DynamicAttributesDemo extends SimpleTagSupport
+implements DynamicAttributes{
+private static final long serialVersionUID = 1L;
+String output=" ";
+private int num;
+public void setNum(int num){
+this.num=num;
+output=output+" The Given No is : "+num;
+}
+@Override
+public void setDynamicAttribute(String nameSpace,
+String name,Object value) throws JspException{
+int n=Integer.parseInt((String) value);
+if(name=="min"){
+output=output+"&lt;br>minimum value of "+num+","+n+" is : "+Math.min(num, n);
+}
+else if(name=="max"){
+output=output+"&lt;br>maximum value of "+num+","+n+" is : "+Math.max(num, n);
+}
+else if(name=="pow"){
+output=output+"&lt;br>power value of "+num+","+n+" is "+Math.pow(num, n);
+}
+}
+@Override
+public void doTag() throws JspException, IOException {
+JspWriter out=getJspContext().getOut();
+out.println(output +"&lt;br>");
+}
+}</code></pre>
+
+<p>myTld.tld</p>
+<pre ><code class="language-java">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
+&lt;tlib-version>1.2&lt;/tlib-version>
+&lt;uri>www.awwalsoft.com&lt;/uri>
+&lt;tag>
+&lt;name>myTag&lt;/name>
+&lt;tag-class>com.tag.DynamicAttributesDemo&lt;/tag-class>
+&lt;body-content>scriptless&lt;/body-content>
+&lt;dynamic-attributes>true&lt;/dynamic-attributes>
+&lt;attribute>
+&lt;name>num&lt;/name>
+&lt;required>true&lt;/required>
+&lt;rtexprvalue>true&lt;/rtexprvalue>
+&lt;/attribute>
+&lt;/tag>
+&lt;/taglib></code></pre>
+
+<p>web.xml<br/>
+        Same as previous</p>
+
+ <p  style="font-weight:bold;color:#212121">Output:
+        </p>
+
+<p>This is before Custom Tag<br/>
+The Given No is : 2<br/>
+minimum value of 2,5 is : 2<br/>
+maximum value of 2,10 is : 10<br/>
+power value of 2,3 is 8.0<br/>
+This is rest of the Jsp page</p>
 
 
 
@@ -427,7 +420,12 @@ return SKIP_BODY;
 
 
 
- 
+
+
+
+
+
+
 
 
 

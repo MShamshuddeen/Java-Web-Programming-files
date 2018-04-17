@@ -249,177 +249,160 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-      
-<div style="text-align: left; background:#696969; padding:7px;">
-    <span style="font-weight:bold;color:#ffffff">
-            BodyTag (I) :
-    </span></div>
+        <div style="text-align: left; background:#696969; padding:7px;">
+            <span style="font-weight:bold;color:#ffffff">
+                    SimpleTag Model : (jsp 2.0v)
+            </span></div>
 
-    <ul>
-        <li>It is the child interface of IterationTag</li>
-        <li>If we want to manipulate the body then we should go for BodyTag interface.</li>
-        <li>BodyTag interface defines the following 2 extra methods
-            <ol>
-                <li>public void setBodyContent(BodyContent bodyContent)</li>
-                <li>public void doInitBody() throws JspException</li>
-            </ol>
-        </li>
-        <li>BodyTag interface defines the following 2 extra constants
-            <ol>
-            <li>EVAL_BODY_BUFFERED</li>
-            <li>EVAL_BODY_TAG (deprecated)</li>
-        </ol>
-        </li>
-        
-    </ul>
+<p>Implementing Custom tags by using Classic Tag Model (i.e., Tag, IterationTag, BodyTag, TagSupport,
+        BodyTagSupport) is very complex because each tag has its own life cycle and different possible return
+        types for every method to resolve this complexity Sun people introduced SimpleTagModel in jsp 2.0
+        version<br/><br/>
+        In SimpleTag model we can built custom tags by using SimpleTag interface and its implementation
+        class SimpleTagSupport.</p>
 
-    
-<div style="text-align: left; background:#696969; padding:7px;">
-    <span style="font-weight:bold;color:#ffffff">BodyContent (AC) :</span></div>
+  <img src="m6l1p1_image1.png" />
 
-<ul>
-    <li>We can use this BodyContent object to hold tag body</li>
-    <li>BodyContent class is the child class of JspWriter</li>
-    <li>BodyContent class is an abstract class and vendor is responsible to provide implementation</li>
-</ul>
+  <div style="text-align: left; background:#696969; padding:7px;">
+      <span style="font-weight:bold;color:#ffffff">
+            SimpleTag interface :
+      </span></div>
 
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    BodyContent class object act as a buffer for tag body , if we want to manipulate that tag body,
-    first we have to retrieve that tag body from the BodyContent object , for that BodyContent class
-    defines the following methods</p>
+<p>It is child interface of JspTag and defines the following 5 methods<br/><br/>
+        1. public void setJspContext(JspContext context)<br/>
+        &nbsp;&nbsp; &nbsp;&nbsp;by using setJspContext() method we can make JspContext object available to Tag Handler class<br/>
+        &nbsp;&nbsp; &nbsp;&nbsp;by using this object we can get all jsp implicit objects and attributes in our tag handler classes.<br/>
+        2. public void setParent(JspTag parent)<br/>
+        &nbsp;&nbsp; &nbsp;&nbsp;This method will executed iff the tag has another tag (nested tag)<br/>
+        3. public void setJspBody(JspFragment jspBody)<br/>
+        4. public void doTag() throws JspException, IOException<br/>
+        5. public JspTag getParent()<br/><br/>
+        &nbsp;&nbsp; &nbsp;&nbsp;These methods are life cycle methods Jsp engine called automatically for every custom tag invocation
+        , but not getParent() method.</p>
 
-<p>1. public String getString() : returns tag body in the form of String.<br/>
-        2. public Reader getReader() : return a Reader object to extract tag body.<br/>
-        3. public JspWriter getEnclosingWriter() : It returns JspWriter to print data to the jsp page.<br/>
-        4. public void ClearBody() : To clear body present in BodyContent object i.e., entire tag body
-        present in BodyContent will be removed.</p>
-
-
-<div style="text-align: left; background:#696969; padding:7px;">
-    <span style="font-weight:bold;color:#ffffff">
-            Flow Chart of BodyTag interface :
-    </span></div>
-
-<img src="m5l4p1_image1.png" />
-
-
-<div style="text-align: left; background:#696969; padding:7px;">
-    <span style="font-weight:bold;color:#ffffff">
-            Life Cycle of BodyTag interface :
-    </span></div>
-
-<ul>
-    <li>Life Cycle of BodyTag interface is exactly similar to IterationTag handler, and difference is
-            doStartTag() returns either EVAL_BODY_INCLUDE or EVAL_BODY_BUFFERED.</li>
-    <li>If the method returns EVAL_BODY_BUFFERED and tag contains body then jsp engine creates
-            BodyContent object and invoke setBodyContent() by passing BodyContent object as a
-            argument followed by doInitBody().</li>
-</ul>
-
-<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
-    we can write a logic to manipulate the tag body with in doAfterBody()</p>
-
-
-<p>setBodyContent(-) and doInitBody() won't be executed in the following cases<br/><br/>
-        case 1 : If doStartTag() returns either EVAL_BODY_INCLUDE or SKIP_BODY.<br/><br/>
-        CASE 2 : If doStartTag() returns either EVAL_BODY_BUFFERED and tag doesn't contain body.</p>
 
         <div style="text-align: left; background:#696969; padding:7px;">
             <span style="font-weight:bold;color:#ffffff">
-                    Implementation of BodyTagSupport class :
+                    Life Cycle of SimpleTag Model :
             </span></div>
 
-<ul>
-    <li>This class extends TagSupport class and implements BodyTag interface.</li>
-    <li>This class provides default implementation for all 9 methods available in BodyTag interface.</li>
-    <li>It is very easy to write Tag handler class by extending BodyTagSupport class instead of
-            implementing BodyTag interface directly.</li>
-    <li>In this case we have to provide implementation only for required methods but not for all 9
-            methods.</li>
-    
-</ul>
-
-<p  style="font-weight:bold;color:#212121">Internal Implementation of BodyTagSupport class :
-    </p>
-
-<p>BodyTagSupport.java</p>
-<pre ><code class="language-java">import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTag;
-import javax.servlet.jsp.tagext.TagSupport;
-public class BodyTagSupport extends TagSupport implements BodyTag{
-private static final long serialVersionUID = 1L;
-protected BodyContent bodyContent;
-@Override
-public void setBodyContent(BodyContent bodyContent){
-this.bodyContent=bodyContent;
-}
-@Override
-public void doInitBody(){
-System.out.println(" doInitBody method");
-}
-@Override
-public int doStartTag() throws JspException{
-return EVAL_BODY_BUFFERED;
-}
-}</code></pre>
+<p>1. When ever the jsp engine encounters a custom tag in jsp it will identify corresponding tag
+        handler class by using taglib directive and TLD file.<br/>
+        2. It creates a new instance of TH class by executing public no-argument constructor.<br/>
+        3. SimpleTag handler objects are never reused by the WC for each tag invocation in new tag
+        handler class created.<br/>
+        4. Web-container executes setJspContext() to make JspContext object available to tag handler
+        class by using this JspContext object tag handler class get all jsp implicit objects and attributes.<br/>
+        5. Jsp engine will call setParent() to make parent tag object available to tag handler class , this
+        method is useful in nested tags( setParent() is only called if the element is nested in another
+        tag invocation )<br/>
+        6. If a custom tag invoked with attribute then for each attribute jsp engine will call
+        corresponding setter methods to make attribute value available to tag handler class (for every
+        attribute one instance variable and corresponding setter method should required)<br/>
+        7. If a custom tag invoke with body then setJspBody() will be executed by taking JspFragment
+        object as argument, JspFragment object represents tag body in SimpleTagModel tag body
+        should not contains scripting elements i.e., the allowed values for the body-content tag is
+        empty, tagdependent, scriptless from Jsp2.0v onwards body-content tag is optional, in
+        SimpleTagModel default value is scriptless.<br/>
+        8. If a custom tag is empty then setJspBody() won't be called , there is no default value in bodycontent
+        in SimpleTagModel.<br/>
+        9. Finally jsp engine will invoke doTag() to required functionality this method is equivalent to
+        doStartTag(), doEndTag(), doAfterBody()<br/>
+        10. Once doTag() completes tag handler class object will be destroy by the WC.</p>
 
 
-<ul>
-    <li>pageContext, bodyContent variables are by default available to our tag handler classes we can
-            use directly.</li>
-    <li>The default return type doStartTag() in BodyTagSupport is EVAL_BODY_BUFFERED,
-            doAfterBody() is SKIP_BODY and doEndTag is EVAL_PAGE.</li>
-</ul>
+        <div style="text-align: left; background:#696969; padding:7px;">
+             <span style="font-weight:bold;color:#ffffff">
+                    Flow chart for SimpleTagModel :
+             </span></div>
+<br/><br/>
 
-<p  style="font-weight:bold;color:#212121">Write a demo program for the usage of BodyTagSupport class
-    </p>
-<p>test.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;mine:myTag>
-This is Body Tag Support Demo body &lt;br>
-&lt;/mine:myTag></code></pre>
+    <img src="m6l1p1_image2.png" />
 
-<p>BodyTagSupportDemo.java</p>
+    <p  style="font-weight:bold;color:#212121">Internal implementation of SimpleTagSupport class :
+        </p>
+
+    <p>SimpleTagSupport.java</p>
 <pre ><code class="language-java">package com.tag;
 import java.io.IOException;
+import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-public class BodyTagSupportDemo extends BodyTagSupport{
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import javax.servlet.jsp.tagext.SimpleTag;
+public class SimpleTagSupport implements SimpleTag {
 private static final long serialVersionUID = 1L;
 @Override
-public int doAfterBody() throws JspException{
-JspWriter out=null;
-try{
-String data=bodyContent.getString();
-data=data.toUpperCase();
-out=bodyContent.getEnclosingWriter();
-out.println(data);
+public void setJspContext(JspContext pc) {
+throw new UnsupportedOperationException("Not supported yet.");
+//To change body of generated methods, choose Tools | Templates.
 }
-catch(IOException e){
-    e.printStackTrace();
+@Override
+public void setParent(JspTag parent) {
+throw new UnsupportedOperationException("Not supported yet.");
+//To change body of generated methods, choose Tools | Templates.
 }
-return SKIP_BODY;
+@Override
+public JspTag getParent() {
+throw new UnsupportedOperationException("Not supported yet.");
+//To change body of generated methods, choose Tools | Templates.
+}
+@Override
+public void setJspBody(JspFragment jspBody) {
+throw new UnsupportedOperationException("Not supported yet.");
+//To change body of generated methods, choose Tools | Templates.
+}
+@Override
+public void doTag() throws JspException, IOException {
+throw new UnsupportedOperationException("Not supported yet.");
+//To change body of generated methods, choose Tools | Templates.
 }
 }</code></pre>
 
-<p>myTld.tld</p>
-<pre ><code class="language-java">&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
-&lt;tlib-version>1.2&lt;/tlib-version>
-&lt;uri>www.awwalsoft.com&lt;/uri>
-&lt;tag>
-&lt;name>myTag&lt;/name>
-&lt;tag-class>com.tag.BodyTagSupportDemo&lt;/tag-class>
-&lt;/tag>
-&lt;/taglib></code></pre>
+<p>(OR)<br/>
+        Sample code :</p>
 
-<p>web.xml</p>
-<pre ><code class="language-java">Same as previous</code></pre>
+<pre ><code class="language-java">import java.io.IOException;
+import javax.servlet.jsp.JspContext;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import javax.servlet.jsp.tagext.SimpleTag;
+public class SimpleTagSupport implements SimpleTag {
+private static final long serialVersionUID = 1L;
+private JspContext jspContext;
+private JspFragment jspBody;
+private JspTag parent;
+@Override
+public void setJspContext(JspContext jspContext) {
+this.jspContext=jspContext;
+}
+protected JspContext getJspContext(){
+return jspContext;
+}
+@Override
+public void setParent(JspTag parent) {
+this.parent=parent;
+}
+@Override
+public JspTag getParent() {
+return parent;
+}
+@Override
+public void setJspBody(JspFragment jspBody) {
+this.jspBody=jspBody;
+}
+public JspFragment getJspBody() {
+return jspBody;
+}
+@Override
+public void doTag() throws JspException, IOException {
+}
+public static final JspTag findAncesterWithClass(JspTag tag,Class c){
+//return null;
+}
+}</code></pre>
 
-<p  style="font-weight:bold;color:#212121">Output:
-    </p>
-<p>THIS IS BODY TAG SUPPORT DEMO BODY</p>
 
 
 
@@ -427,7 +410,8 @@ return SKIP_BODY;
 
 
 
- 
+
+
 
 
 
