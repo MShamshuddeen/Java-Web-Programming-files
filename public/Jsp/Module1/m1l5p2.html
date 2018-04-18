@@ -219,11 +219,7 @@ pre.line-numbers > code {
 
 }
 
-img {
-    max-width: 100%;
-    max-height: 100vh;
-    height: auto;
-}
+
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
@@ -233,7 +229,8 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    padding: 8px;
+    padding: 2px;
+	font-size: 12px;
 }
 
 tr:nth-child(even) {
@@ -266,7 +263,7 @@ implicit object :</p>
 <p>We can use pageContext implicit object to perform attribute management in any scope for this
 purpose PageContext class following these methods
 </p>
-<img src="j6.jpg" >
+<img src="j6.jpg" width="90%" height="250px" >
 
 <p><br>public void setAttribute(String aname, Object value, int scope)</p>
 
@@ -326,7 +323,7 @@ null</code></pre>
 	<ol>
 	<li>page.setAttribute("ashok","scjp"); //invalid</li>
 	<li>pageContext.setAttribute("ashok","scjp",2); //invalid</li>
-	<li>pageContext.setAttribute("ashok","scjp",pageContext.PAGE_SCOPE);//valid</li>
+	<li>pageContext.setAttribute("ashok","scjp"<br/>,pageContext.PAGE_SCOPE);//valid</li>
 	<li>pageContext.setAttribute("ashok","scwcd"); //valid</li>
 	<li>pageContext.setAttribute("ashok","scjp", pageContext.PAGE_CONTEXT_SCOPE); //invalid</li>
 </ol>
@@ -361,7 +358,7 @@ null</code></pre>
   <tr>
     <th>scope</th>
     <th>in Servlets  </th>
-    <th>in Jsp's(using jsp implicit objects)</th>
+    <th>in Jsp's<br/>(using jsp<br/> implicit objects)</th>
     
     
   </tr>
@@ -369,28 +366,27 @@ null</code></pre>
     <td>application/context 
 </td>
     <td>getServletContext.
-setAttribute("ashok","scwcd");</td>
+setAttribute("ashok"<br/>,"scwcd");</td>
     
- <td>  application.
-setAttribute("ashok","scwcd"); </td>
+ <td>application.<br/>
+setAttribute<br/>("ashok","scwcd"); </td>
    
   </tr>
    <tr>
    <td>session</td>
    <td>request.getSession().
-setAttribute("ashok","scwcd");</td>
-    <td>session.
-setAttribute("ashok","scwcd"); </td>
+setAttribute("ashok"<br/>,"scwcd");</td>
+    <td>session.setAttribute<br/>("ashok","scwcd"); </td>
     
    
     
   </tr>
   <tr><td>request</td>
     <td>request.
-setAttribute("ashok","scwcd");
+setAttribute("ashok"<br/>,"scwcd");
  </td>
     <td>request.
-setAttribute("ashok","scwcd");</td>
+setAttribute<br/>("ashok","scwcd");</td>
     
    
 
@@ -399,7 +395,7 @@ setAttribute("ashok","scwcd");</td>
   <tr><td>page</td>
    <td>Not Applicable </td>
     <td>pageContext.
-setAttribute("ashok","scwcd");
+setAttribute<br/>("ashok","scwcd");
  </td>
     
     
