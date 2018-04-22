@@ -219,11 +219,7 @@ pre.line-numbers > code {
 
 }
 
-img {
-    max-width: 100%;
-    max-height: 100vh;
-    height: auto;
-}
+
 
 table {
     font-family: arial, sans-serif;
@@ -234,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    font-size: 10px;
-    padding: 2px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -250,160 +245,66 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
+        <div style="text-align: left; background:#696969; padding:7px;">
+            <span style="font-weight:bold;color:#ffffff">
+                    1. init():
+            </span></div>
+<br/>
+<img src="m1l2p3_image1.png" width="100%" height="50px" />
+<p>This method will be executed only once by the web container immediately after Servlet
+        instantiation to perform initialization activities .<br/><br/>
+        Web container won't place Servlet object into service( ) method in the following cases :<br/>
+        1. If init() throws ServletException.<br/>
+        2. If init() doesn't return with in the time period specified by web container.<br/><br/>
+        In the above cases web contaioner makes that servlet object eligible for Garbage Collection
+        without calling any other life cycle method .<br/>
+        In this case web container creates a new Servlet object to provide service.</p>
 
-  <p  style="font-weight:bold;color:#212121">What happens when the tag is invoked from on included page ?
-        </p>
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+                2. service( ) :
+        </span></div>
+<br/>
+<img src="m1l2p3_image2.png" width="100%" height="50px" />
+<p>web container calls this method for every request to provide response.<br/>
+        Entire servicing logic/business logic , we have to define in this method only.</p>
 
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>includes test Jsp &lt;/title>
-This is before Jsp inclusion &lt;br>
-&lt;jsp:include page="test.jsp"/> &lt;br>
-This is after Jsp inclusion</code></pre>
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+                3. destroy() :
+        </span></div>
+<br/>
+<img src="m1l2p3_image3.png" width="90%" height="50px"/>
 
-<p>test.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>Included file&lt;/title>
-This is before Custom Tag &lt;br>
-&lt;mine:myTag>
-This is the body of the tag &lt;br>
-&lt;/mine:myTag>
-This is rest of the Jsp page</code></pre>
+<p>This method will be executed only once by the web container to perform claen up activities ,
+        when ever web container takes servlet object from out of service. This is usually happens at
+        the time of application undeployed (or) at the time of server shut down (or) Web Container
+        requires some free memory .<br/><br/>
+        when ever web container calls destroy( ) method , it may not be executed immediately. It will
+        wait untill completing all currently executing threads.</p>
 
-<p>SimpleTagDemo.java</p>
-<pre ><code class="language-java">package com.tag;
-import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.SkipPageException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-public class SimpleTagDemo extends SimpleTagSupport {
-private static final long serialVersionUID = 1L;
-@Override
-public void doTag() throws JspException, IOException {
-JspWriter out=getJspContext().getOut();
-out.println("Hello, this is from tag handler&lt;br>");
-//throw new SkipPageException();
-}
-}</code></pre>
+      <p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
+        init( ) , service( ) , destroy( ) are called life cycle methods of Servlet.
+        we can call destroy() explicitly from the init( ) and service( ) , in this case destroy( ) will be
+        executed just like a normal method call and servlet object won't be destroyed .</p>
 
-<p>myTld.tld</p>
-<pre ><code class="language-java">&lt;?xml version="1.0" encoding="UTF-8"?>
-&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
-&lt;tlib-version>1.2&lt;/tlib-version>
-&lt;uri>www.awwalsoft.com&lt;/uri>
-&lt;tag>
-&lt;name>myTag&lt;/name>
-&lt;tag-class>com.tag.SimpleTagDemo&lt;/tag-class>
-&lt;body-content>scriptless&lt;/body-content>
-&lt;/tag>
-&lt;/taglib></code></pre>
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+                4. getServletConfig :
+        </span></div>
+<br/>
+        <img src="m1l2p3_image4.png" width="100%" height="50px"/>
 
-<p>web.xml<br/>
-        Same as previous</p>
-
-<p  style="font-weight:bold;color:#212121">Output:
-        </p>
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/>
-        This is rest of the Jsp page<br/>
-        This is after Jsp inclusion</p>
-
-<p>remove comment on above THC</p>
-<p  style="font-weight:bold;color:#212121">Output:
-    </p>
-
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/><br/>
-        This is after Jsp inclusion</p>
-
-        <p  style="font-weight:bold;color:#212121">What is the difference between ClassicTagModel and SimpleTagModel with respect to tag body :
-            </p>
-    
-<ul>
-    <li>In ClassicTagModel the tag body can contains scripting elements hence the allowed values for
-            body-content types are empty, tagdependent, scriptless, jsp and default value is jsp.</li>
-    <li>But in SimpleTagModel the tag body should not contains scripting elements hence the allowed
-            values for body-content types are empty, tagdependent, scriptless and default value is scriptless.</li>
-</ul>
-
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Key differences between ClassictagModel and SimpleTagModel :
-</span></div>
-<br/><br/>
-<table>
-    <tr>
-        <th>Property</th>
-        <th>ClassictagModel</th>
-        <th>SimpleTagModel</th>        
-    </tr>
-    <tr>
-        <td><br/>key interfaces<br/></td>
-        <td>Tag(I)<br/>
-                IterationTag(I)<br/>
-                BodyTag(I)</td>
-        <td><br/>SimpleTag(I)<br/></td>        
-    </tr>
-    <tr>
-        <td>supporting<br/>
-                implementation<br/>
-                classes</td>
-        <td>TagSupport(C)<br/>
-                BodyTagSupport(C)</td>
-        <td><br/>SimpleTagSupport(C)</td>        
-    </tr>
-    <tr>
-        <td>key life cycle
-                methods that we
-                have to implement</td>
-        <td>doStartTag()
-                doEndTag()
-                doAfterBody()</td>
-        <td>doTag()</td>        
-    </tr>
-    <tr>
-        <td>how to write
-                response to jsp
-                output stream</td>
-        <td>pageContext(). getOut().println()
-                we should enclose this statement by using try,
-                catch</td>
-        <td>getPageContext().
-                getOut().println()
-                it is not required enclose try,
-                catch</td>        
-    </tr>
-      <tr>
-        <td>how to access jsp
-                implicit objects and
-                attributes</td>
-        <td>by using PageContext
-                pageContext.getOut();</td>
-        <td>by using JspContext</td>        
-    </tr>
-      <tr>
-        <td>how to include tag
-                body in the result</td>
-        <td>in the case of Tag, IterationTag interfaces
-                doStartTag() should return
-                EVAL_BODY_INCLUDE but in BodyTag interface
-                doStartTag() should return
-                EVAL_BODY_BUFFERED</td>
-        <td>getJspBody().invoke(null);</td>        
-    </tr>
-      <tr>
-        <td>how to stop current
-                jsp execution</td>
-        <td>doEndTag() should return SKIP_PAGE</td>
-        <td>in side doTag() we should
-                throw SkipPageException</td>        
-    </tr>
-</table>
+<p>This method can be used to get ServletConfig object .<br/>
+        By using this config object Servlet can get its configuration information.</p>
 
 
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+                5. getServletInfo ( ) :
+        </span></div>
+<br/>
+<img src="m1l2p3_image5.png" width="90%" height="50px"/>
 
+<p>This method returns information about Servlet like Author, version , copy right information
+        etc.</p>
+        
 
 
 

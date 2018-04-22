@@ -219,11 +219,7 @@ pre.line-numbers > code {
 
 }
 
-img {
-    max-width: 100%;
-    max-height: 100vh;
-    height: auto;
-}
+
 
 table {
     font-family: arial, sans-serif;
@@ -234,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    font-size: 10px;
-    padding: 2px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -251,156 +246,87 @@ tr:nth-child(even) {
  
   <div class="container">
 
-  <p  style="font-weight:bold;color:#212121">What happens when the tag is invoked from on included page ?
-        </p>
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+                Life Cycle of the Servlet that implements Servlet interface :
+        </span></div>
 
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>includes test Jsp &lt;/title>
-This is before Jsp inclusion &lt;br>
-&lt;jsp:include page="test.jsp"/> &lt;br>
-This is after Jsp inclusion</code></pre>
+<p>1. Servlet class loading by class loader.(It is part of Jvm)<br/>
+        2. Servlet Instantiation by webcontainer , For this web container always calls public-noargument
+        constructor . Hence Every servlet should compulsary contain public-noargument
+        constructor.Otherwise we will get RuntimeException saying
+        java.lang.Instantiation exception .<br/>
+        3. Execution of init(-) by webcontainer<br/>
+        Note: The above 3 steps will be performed Generally at the time of first
+        request.If&lt;load-on-startup> is configured these will be executed at the time of either
+        server startup or at the time of application deployment.<br/>
+        4. Execution of service( ) by web-container.<br/>
+        5. Execution of destroy( )</p>
 
-<p>test.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>Included file&lt;/title>
-This is before Custom Tag &lt;br>
-&lt;mine:myTag>
-This is the body of the tag &lt;br>
-&lt;/mine:myTag>
-This is rest of the Jsp page</code></pre>
 
-<p>SimpleTagDemo.java</p>
-<pre ><code class="language-java">package com.tag;
-import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.SkipPageException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-public class SimpleTagDemo extends SimpleTagSupport {
-private static final long serialVersionUID = 1L;
-@Override
-public void doTag() throws JspException, IOException {
-JspWriter out=getJspContext().getOut();
-out.println("Hello, this is from tag handler&lt;br>");
-//throw new SkipPageException();
-}
-}</code></pre>
+        <p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
+            If we are invoking destroy( ) explicitly inside service( ) that time any exception will be
+            raised the exception will show to the end-user, when we won't handle this situation .<br/><br/>
+        
+            If web-container calls destroy( ) then that time the exception will be raised the exception that
+            surpressed by the web-container.</p>
 
-<p>myTld.tld</p>
-<pre ><code class="language-java">&lt;?xml version="1.0" encoding="UTF-8"?>
-&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
-&lt;tlib-version>1.2&lt;/tlib-version>
-&lt;uri>www.awwalsoft.com&lt;/uri>
-&lt;tag>
-&lt;name>myTag&lt;/name>
-&lt;tag-class>com.tag.SimpleTagDemo&lt;/tag-class>
-&lt;body-content>scriptless&lt;/body-content>
-&lt;/tag>
-&lt;/taglib></code></pre>
+    <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+            constructor Vs init( ) :
+    </span></div>
 
-<p>web.xml<br/>
-        Same as previous</p>
-
-<p  style="font-weight:bold;color:#212121">Output:
-        </p>
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/>
-        This is rest of the Jsp page<br/>
-        This is after Jsp inclusion</p>
-
-<p>remove comment on above THC</p>
-<p  style="font-weight:bold;color:#212121">Output:
-    </p>
-
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/><br/>
-        This is after Jsp inclusion</p>
-
-        <p  style="font-weight:bold;color:#212121">What is the difference between ClassicTagModel and SimpleTagModel with respect to tag body :
-            </p>
-    
 <ul>
-    <li>In ClassicTagModel the tag body can contains scripting elements hence the allowed values for
-            body-content types are empty, tagdependent, scriptless, jsp and default value is jsp.</li>
-    <li>But in SimpleTagModel the tag body should not contains scripting elements hence the allowed
-            values for body-content types are empty, tagdependent, scriptless and default value is scriptless.</li>
+    <li>In general , we can use constructor to perform initialization activities but in old
+            versions of java, constructor cannot accept dynamically generated class name as
+            argument.</li>
+    <li>To perform initialization of servlet compulsary we should provide ServletConfig object
+            as argument. whose class name is dynamically generated by web-container</li>
+    <li>As constructor cannot accept these dynamically generated names, Sun people ignores
+            constructor concept and introduced a specific method init( ) to perform initialization
+            activities , which can take dynamically generated class names as the arguments.</li>
+    <li>In the older versions , constructor cannot take any arguments but to perform
+            initialization of a servlet compulsary we should provide ServletConfig as argument.</li>
+    <li>Hence we can't use constructor to perform initialization activities , Sun people
+            introduced a specific methods init( ) . for this , which can take ServletConfig as
+            argument.</li>
+    
+</ul>
+
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+        destroy( ) Vs finalise( ) :
+</span></div>
+
+<ul>
+    <li>Before destroying any object Garbage collector always calls finalise( ) to perform
+            cleanup activities. But we can't expect exact behaviour of Garbage collector. which is
+            vendor dependent.</li>
+    <li>Hence instead of depending on finalise( ) , Sun people introduced a specific method
+            destroy( ) to perform cleanup activities , which should be executed always.</li>    
 </ul>
 
 <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Key differences between ClassictagModel and SimpleTagModel :
+        GenericServlet(AC):
 </span></div>
-<br/><br/>
-<table>
-    <tr>
-        <th>Property</th>
-        <th>ClassictagModel</th>
-        <th>SimpleTagModel</th>        
-    </tr>
-    <tr>
-        <td><br/>key interfaces<br/></td>
-        <td>Tag(I)<br/>
-                IterationTag(I)<br/>
-                BodyTag(I)</td>
-        <td><br/>SimpleTag(I)<br/></td>        
-    </tr>
-    <tr>
-        <td>supporting<br/>
-                implementation<br/>
-                classes</td>
-        <td>TagSupport(C)<br/>
-                BodyTagSupport(C)</td>
-        <td><br/>SimpleTagSupport(C)</td>        
-    </tr>
-    <tr>
-        <td>key life cycle
-                methods that we
-                have to implement</td>
-        <td>doStartTag()
-                doEndTag()
-                doAfterBody()</td>
-        <td>doTag()</td>        
-    </tr>
-    <tr>
-        <td>how to write
-                response to jsp
-                output stream</td>
-        <td>pageContext(). getOut().println()
-                we should enclose this statement by using try,
-                catch</td>
-        <td>getPageContext().
-                getOut().println()
-                it is not required enclose try,
-                catch</td>        
-    </tr>
-      <tr>
-        <td>how to access jsp
-                implicit objects and
-                attributes</td>
-        <td>by using PageContext
-                pageContext.getOut();</td>
-        <td>by using JspContext</td>        
-    </tr>
-      <tr>
-        <td>how to include tag
-                body in the result</td>
-        <td>in the case of Tag, IterationTag interfaces
-                doStartTag() should return
-                EVAL_BODY_INCLUDE but in BodyTag interface
-                doStartTag() should return
-                EVAL_BODY_BUFFERED</td>
-        <td>getJspBody().invoke(null);</td>        
-    </tr>
-      <tr>
-        <td>how to stop current
-                jsp execution</td>
-        <td>doEndTag() should return SKIP_PAGE</td>
-        <td>in side doTag() we should
-                throw SkipPageException</td>        
-    </tr>
-</table>
+
+<ul>
+    <li>We can develope servlet by implementing Servlet interface directly. In this apprach
+            compulsary we should provide implementing for all methods of servlet interface
+            whether it is required or not . This approach increase length of the code and reduces
+            readability. We can resolve this problem by using GenericServlet.</li>
+    <li>GenericServlet implements Servlet interface and provide default implementation for
+            every method except service( ). Hence it is an abstract class.</li>
+    <li>We can develope servlets very easily by extending GenericServlet, instead of
+            implementing Servlet interface directly. In this appraoch we have to provide
+            implementation only for required methods instead of implementing all. It reduces
+            length of the code and improves readability.</li>
+    <li>GenericServlet is protocol independent servlet.</li>
+    <li>GenericServlet implements ServletConfig and Serializable interfaces also.</li>
+</ul>
+
+<img src="m1l3p1_image1.png" width="90%" height="200px"/>
+
+
+ 
 
 
 

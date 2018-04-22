@@ -219,11 +219,7 @@ pre.line-numbers > code {
 
 }
 
-img {
-    max-width: 100%;
-    max-height: 100vh;
-    height: auto;
-}
+
 
 table {
     font-family: arial, sans-serif;
@@ -234,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    font-size: 10px;
-    padding: 2px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -250,157 +245,146 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-
-  <p  style="font-weight:bold;color:#212121">What happens when the tag is invoked from on included page ?
-        </p>
-
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>includes test Jsp &lt;/title>
-This is before Jsp inclusion &lt;br>
-&lt;jsp:include page="test.jsp"/> &lt;br>
-This is after Jsp inclusion</code></pre>
-
-<p>test.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>Included file&lt;/title>
-This is before Custom Tag &lt;br>
-&lt;mine:myTag>
-This is the body of the tag &lt;br>
-&lt;/mine:myTag>
-This is rest of the Jsp page</code></pre>
-
-<p>SimpleTagDemo.java</p>
-<pre ><code class="language-java">package com.tag;
+<p>Demo program the develope a servlet by implementing Servlet interface</p>
+<p  style="font-weight:bold;color:#212121">FirstServlet.java
+    </p>
+<pre ><code class="language-java">package com.jobs4times;
 import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.SkipPageException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-public class SimpleTagDemo extends SimpleTagSupport {
-private static final long serialVersionUID = 1L;
-@Override
-public void doTag() throws JspException, IOException {
-JspWriter out=getJspContext().getOut();
-out.println("Hello, this is from tag handler&lt;br>");
-//throw new SkipPageException();
+import java.io.PrintWriter;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+public class FirstServlet implements Servlet {
+
+static {
+ System.out.println("Servlet class loading");
+}
+public FirstServlet () {
+System.out.println("servlet instantiation");
+}
+
+ServletConfig config;
+public void init(ServletConfig config ) throws ServletException {
+this.config=config;
+System.out.println(" we are in init( ) method ");
+}
+public void service(ServletRequest request, ServletResponse response)
+throws ServletException, IOException {
+System.out.println("We are in service( ) method ");
+PrintWriter out=response.getWriter();
+out.println("welcome to SCWCD");
+}
+public void destroy() {
+System.out.println("We are in destroy() method ");
+}
+public ServletConfig getServletConfig( ) {
+return null ;
+}
+public String getServletInfo() {
+return "Written by Jobs4Times " ;
 }
 }</code></pre>
 
-<p>myTld.tld</p>
-<pre ><code class="language-java">&lt;?xml version="1.0" encoding="UTF-8"?>
-&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
-&lt;tlib-version>1.2&lt;/tlib-version>
-&lt;uri>www.awwalsoft.com&lt;/uri>
-&lt;tag>
-&lt;name>myTag&lt;/name>
-&lt;tag-class>com.tag.SimpleTagDemo&lt;/tag-class>
-&lt;body-content>scriptless&lt;/body-content>
-&lt;/tag>
-&lt;/taglib></code></pre>
+<pre ><code class="language-java">&lt;web-app>
+&lt;servlet>
+&lt;servlet-name>first&lt;/servlet-name>
+&lt;servlet-class>com.awwalsoft.FirstServlet&lt;/servlet-class>
+&lt;load-on-startup>5&lt;/load-on-startup>
+&lt;/servlet>
+&lt;servlet-mapping>
+&lt;servlet-name>first&lt;/servlet-name>
+&lt;url-pattern>/fs&lt;/url-pattern>
+&lt;/servlet-mapping>
+&lt;/web-app></code></pre>
 
-<p>web.xml<br/>
-        Same as previous</p>
-
-<p  style="font-weight:bold;color:#212121">Output:
-        </p>
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/>
-        This is rest of the Jsp page<br/>
-        This is after Jsp inclusion</p>
-
-<p>remove comment on above THC</p>
-<p  style="font-weight:bold;color:#212121">Output:
-    </p>
-
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/><br/>
-        This is after Jsp inclusion</p>
-
-        <p  style="font-weight:bold;color:#212121">What is the difference between ClassicTagModel and SimpleTagModel with respect to tag body :
-            </p>
-    
-<ul>
-    <li>In ClassicTagModel the tag body can contains scripting elements hence the allowed values for
-            body-content types are empty, tagdependent, scriptless, jsp and default value is jsp.</li>
-    <li>But in SimpleTagModel the tag body should not contains scripting elements hence the allowed
-            values for body-content types are empty, tagdependent, scriptless and default value is scriptless.</li>
-</ul>
+<p>http://localhost:8080/SCWCD1A/fs</p>
+<p>1. When ever we are sending the request ,webserver checks whether this request is for
+        static or dynamic information by using URL pattern.<br/>
+2. If the request is for static information , Webserver searches for the required static file
+and provides required response.<br/>
+3. If the request is for dynamic information , Webserver forwards that request to
+webcontainer .<br/>
+The webcontainer identifies the corresponding servlet class by using web.xml<br/>
+4. Webcontainer loads that .class file , perform instantiation , and execute init( ) and
+service( ) methods and provide required response to the webserver<br/>
+5. webserver inturn forwards that response to end-user.</p>
 
 <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Key differences between ClassictagModel and SimpleTagModel :
+        WithOut &lt;load-on-startup> :
 </span></div>
-<br/><br/>
-<table>
-    <tr>
-        <th>Property</th>
-        <th>ClassictagModel</th>
-        <th>SimpleTagModel</th>        
-    </tr>
-    <tr>
-        <td><br/>key interfaces<br/></td>
-        <td>Tag(I)<br/>
-                IterationTag(I)<br/>
-                BodyTag(I)</td>
-        <td><br/>SimpleTag(I)<br/></td>        
-    </tr>
-    <tr>
-        <td>supporting<br/>
-                implementation<br/>
-                classes</td>
-        <td>TagSupport(C)<br/>
-                BodyTagSupport(C)</td>
-        <td><br/>SimpleTagSupport(C)</td>        
-    </tr>
-    <tr>
-        <td>key life cycle
-                methods that we
-                have to implement</td>
-        <td>doStartTag()
-                doEndTag()
-                doAfterBody()</td>
-        <td>doTag()</td>        
-    </tr>
-    <tr>
-        <td>how to write
-                response to jsp
-                output stream</td>
-        <td>pageContext(). getOut().println()
-                we should enclose this statement by using try,
-                catch</td>
-        <td>getPageContext().
-                getOut().println()
-                it is not required enclose try,
-                catch</td>        
-    </tr>
-      <tr>
-        <td>how to access jsp
-                implicit objects and
-                attributes</td>
-        <td>by using PageContext
-                pageContext.getOut();</td>
-        <td>by using JspContext</td>        
-    </tr>
-      <tr>
-        <td>how to include tag
-                body in the result</td>
-        <td>in the case of Tag, IterationTag interfaces
-                doStartTag() should return
-                EVAL_BODY_INCLUDE but in BodyTag interface
-                doStartTag() should return
-                EVAL_BODY_BUFFERED</td>
-        <td>getJspBody().invoke(null);</td>        
-    </tr>
-      <tr>
-        <td>how to stop current
-                jsp execution</td>
-        <td>doEndTag() should return SKIP_PAGE</td>
-        <td>in side doTag() we should
-                throw SkipPageException</td>        
-    </tr>
-</table>
+
+<p>First Request:<br/><br/>
+        1. loading .class file (/ servlet loading)<br/>
+        2. Instantiation<br/>
+        3. init( )<br/>
+        4. service( )<br/>
+        Second Request: service( )</p>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+        With &lt;load-on-startup> :
+</span></div>
+<p>At server startup/Application deployment<br/><br/>
+        1. loading .class file (/ servlet loading)<br/>
+        2. Instantiation<br/>
+        3. init( )<br/><br/>
+        First Request : service( )<br/>
+        Second Request : service( )</p>
+
+
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+            Note:
+        </span></div>
+
+<p>The allowed values for &lt;load-on-startup> tag is an integer i.e., +ve , zero , -ve<br/>
+        In the case of &lt;load-on-startup> in deployment descriptor</p>
+
+<ul>
+    <li>Highest value to give the least priority</li>
+    <li>Lowest value give high Priority</li>
+    <li>Zero will give last priority</li>
+    <li>-ve value means ignore the &lt;load-on-startup> concept.</li>
+</ul>
+
+<p>If we give the two servlets having the same &lt;load-on-startup> value we can't expect
+        execution order or behaviour .</p>
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+                What is the advantage of &lt;load-on-startup> :
+        </span></div>
+
+<p>We can equalize the response time of first request and remaining requests.<br/><br/>
+        The main disadvantage of &lt;load-on-startup> is it increases server start up time without any
+        specific requirement don't configure this &lt;load-on-startup> on servlet.</p>
+
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+            Note:
+        </span></div>
+
+<p>From servlet 2.5v onwards a single servlet can be mapped with multiple &lt;url-pattern>tags
+        i.e., we can take multiple &lt;url-pattern> tags with in single &lt;servlet-mapping> tag.<br/><br/>
+        Ex:</p>
+
+<pre ><code class="language-java">&lt;servlet-mapping>
+&lt;url-pattern>/test &lt;/url-pattern>
+&lt;url-pattern>/test &lt;/url-pattern>
+&lt;/servlet-mapping></code></pre>
+
+
+<p  style="font-weight:bold;color:#212121">Note:
+    </p>
+<p>Whenever we are writing 2 servlets having same url-pattern , if we are sending a request to
+        particular url-pattern
+        <br/><br/>
+        The order of evaluation of web.xml is decided by the underling webserver , there is no
+        specification rules</p>
+
+<ul>
+    <li>In the case of Tomcat the order of evaluation of web.xml is Bottom to Top.</li>
+    <li>In the case of Weblogic the order of evaluation of web.xml is Top to Bottom.</li>    
+</ul>
+
 
 
 

@@ -219,11 +219,7 @@ pre.line-numbers > code {
 
 }
 
-img {
-    max-width: 100%;
-    max-height: 100vh;
-    height: auto;
-}
+
 
 table {
     font-family: arial, sans-serif;
@@ -234,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    font-size: 10px;
-    padding: 2px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -250,161 +245,6 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-
-  <p  style="font-weight:bold;color:#212121">What happens when the tag is invoked from on included page ?
-        </p>
-
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>includes test Jsp &lt;/title>
-This is before Jsp inclusion &lt;br>
-&lt;jsp:include page="test.jsp"/> &lt;br>
-This is after Jsp inclusion</code></pre>
-
-<p>test.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>Included file&lt;/title>
-This is before Custom Tag &lt;br>
-&lt;mine:myTag>
-This is the body of the tag &lt;br>
-&lt;/mine:myTag>
-This is rest of the Jsp page</code></pre>
-
-<p>SimpleTagDemo.java</p>
-<pre ><code class="language-java">package com.tag;
-import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.SkipPageException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-public class SimpleTagDemo extends SimpleTagSupport {
-private static final long serialVersionUID = 1L;
-@Override
-public void doTag() throws JspException, IOException {
-JspWriter out=getJspContext().getOut();
-out.println("Hello, this is from tag handler&lt;br>");
-//throw new SkipPageException();
-}
-}</code></pre>
-
-<p>myTld.tld</p>
-<pre ><code class="language-java">&lt;?xml version="1.0" encoding="UTF-8"?>
-&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
-&lt;tlib-version>1.2&lt;/tlib-version>
-&lt;uri>www.awwalsoft.com&lt;/uri>
-&lt;tag>
-&lt;name>myTag&lt;/name>
-&lt;tag-class>com.tag.SimpleTagDemo&lt;/tag-class>
-&lt;body-content>scriptless&lt;/body-content>
-&lt;/tag>
-&lt;/taglib></code></pre>
-
-<p>web.xml<br/>
-        Same as previous</p>
-
-<p  style="font-weight:bold;color:#212121">Output:
-        </p>
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/>
-        This is rest of the Jsp page<br/>
-        This is after Jsp inclusion</p>
-
-<p>remove comment on above THC</p>
-<p  style="font-weight:bold;color:#212121">Output:
-    </p>
-
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/><br/>
-        This is after Jsp inclusion</p>
-
-        <p  style="font-weight:bold;color:#212121">What is the difference between ClassicTagModel and SimpleTagModel with respect to tag body :
-            </p>
-    
-<ul>
-    <li>In ClassicTagModel the tag body can contains scripting elements hence the allowed values for
-            body-content types are empty, tagdependent, scriptless, jsp and default value is jsp.</li>
-    <li>But in SimpleTagModel the tag body should not contains scripting elements hence the allowed
-            values for body-content types are empty, tagdependent, scriptless and default value is scriptless.</li>
-</ul>
-
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Key differences between ClassictagModel and SimpleTagModel :
-</span></div>
-<br/><br/>
-<table>
-    <tr>
-        <th>Property</th>
-        <th>ClassictagModel</th>
-        <th>SimpleTagModel</th>        
-    </tr>
-    <tr>
-        <td><br/>key interfaces<br/></td>
-        <td>Tag(I)<br/>
-                IterationTag(I)<br/>
-                BodyTag(I)</td>
-        <td><br/>SimpleTag(I)<br/></td>        
-    </tr>
-    <tr>
-        <td>supporting<br/>
-                implementation<br/>
-                classes</td>
-        <td>TagSupport(C)<br/>
-                BodyTagSupport(C)</td>
-        <td><br/>SimpleTagSupport(C)</td>        
-    </tr>
-    <tr>
-        <td>key life cycle
-                methods that we
-                have to implement</td>
-        <td>doStartTag()
-                doEndTag()
-                doAfterBody()</td>
-        <td>doTag()</td>        
-    </tr>
-    <tr>
-        <td>how to write
-                response to jsp
-                output stream</td>
-        <td>pageContext(). getOut().println()
-                we should enclose this statement by using try,
-                catch</td>
-        <td>getPageContext().
-                getOut().println()
-                it is not required enclose try,
-                catch</td>        
-    </tr>
-      <tr>
-        <td>how to access jsp
-                implicit objects and
-                attributes</td>
-        <td>by using PageContext
-                pageContext.getOut();</td>
-        <td>by using JspContext</td>        
-    </tr>
-      <tr>
-        <td>how to include tag
-                body in the result</td>
-        <td>in the case of Tag, IterationTag interfaces
-                doStartTag() should return
-                EVAL_BODY_INCLUDE but in BodyTag interface
-                doStartTag() should return
-                EVAL_BODY_BUFFERED</td>
-        <td>getJspBody().invoke(null);</td>        
-    </tr>
-      <tr>
-        <td>how to stop current
-                jsp execution</td>
-        <td>doEndTag() should return SKIP_PAGE</td>
-        <td>in side doTag() we should
-                throw SkipPageException</td>        
-    </tr>
-</table>
-
-
-
-
 
 
 

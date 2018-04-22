@@ -219,11 +219,7 @@ pre.line-numbers > code {
 
 }
 
-img {
-    max-width: 100%;
-    max-height: 100vh;
-    height: auto;
-}
+
 
 table {
     font-family: arial, sans-serif;
@@ -234,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    font-size: 10px;
-    padding: 2px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -250,161 +245,79 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
+        <div style="text-align: left; background:#696969; padding:7px;">
+            <span style="font-weight:bold;color:#ffffff">
+                    Responsibilities of Servlet Container :
+            </span></div>
 
-  <p  style="font-weight:bold;color:#212121">What happens when the tag is invoked from on included page ?
-        </p>
-
-<p>index.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>includes test Jsp &lt;/title>
-This is before Jsp inclusion &lt;br>
-&lt;jsp:include page="test.jsp"/> &lt;br>
-This is after Jsp inclusion</code></pre>
-
-<p>test.jsp</p>
-<pre ><code class="language-java">&lt;%@taglib uri="http://awwalsoft.com/tags" prefix="mine" %>
-&lt;title>Included file&lt;/title>
-This is before Custom Tag &lt;br>
-&lt;mine:myTag>
-This is the body of the tag &lt;br>
-&lt;/mine:myTag>
-This is rest of the Jsp page</code></pre>
-
-<p>SimpleTagDemo.java</p>
-<pre ><code class="language-java">package com.tag;
-import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.SkipPageException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-public class SimpleTagDemo extends SimpleTagSupport {
-private static final long serialVersionUID = 1L;
-@Override
-public void doTag() throws JspException, IOException {
-JspWriter out=getJspContext().getOut();
-out.println("Hello, this is from tag handler&lt;br>");
-//throw new SkipPageException();
-}
-}</code></pre>
-
-<p>myTld.tld</p>
-<pre ><code class="language-java">&lt;?xml version="1.0" encoding="UTF-8"?>
-&lt;taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee">
-&lt;tlib-version>1.2&lt;/tlib-version>
-&lt;uri>www.awwalsoft.com&lt;/uri>
-&lt;tag>
-&lt;name>myTag&lt;/name>
-&lt;tag-class>com.tag.SimpleTagDemo&lt;/tag-class>
-&lt;body-content>scriptless&lt;/body-content>
-&lt;/tag>
-&lt;/taglib></code></pre>
-
-<p>web.xml<br/>
-        Same as previous</p>
-
-<p  style="font-weight:bold;color:#212121">Output:
-        </p>
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/>
-        This is rest of the Jsp page<br/>
-        This is after Jsp inclusion</p>
-
-<p>remove comment on above THC</p>
-<p  style="font-weight:bold;color:#212121">Output:
+<p>1. To provide the environment to manage web resource of Web Application.<br/>
+        2. It Perform total life cycle operations.<br/>
+        3. In case of JSP to generate corresponding Generated Servlet.<br/>
+        J2SDK software is instalable.<br/>
+        (through cmd prompt )<br/>
+        J2EE is not a instalable software , It is a specification,(not through cmd prompt )<br/><br/>
+        Specification is a document , it contain set of RULES(interfaces) and GUIDELINES(classes).<br/>
+        SERVLET ia not a technology , It is a specification.<br/><br/>
+        Specification related package consists of more number of INTERFACES and less number of
+        CLASSES.<br/>
+        RULES --->interfaces(method declarations)<br/>
+        GUIDELINES----> classes(concrete methods )<br/><br/>
+        In servlets we use the instance variables are not Thread Safe.
     </p>
 
-<p>This is before Jsp inclusion<br/>
-        This is before Custom Tag<br/>
-        Hello, this is from tag handler<br/><br/>
-        This is after Jsp inclusion</p>
+    <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+            Web Programming for Static information :
+    </span></div>
 
-        <p  style="font-weight:bold;color:#212121">What is the difference between ClassicTagModel and SimpleTagModel with respect to tag body :
-            </p>
+ <img src="m1l1p2_image1.png" width="90%" height="150px"/>
+
+<p>Client sends a request for a static file.<br/>
+        Web server searches whether the requested static file is available or not at Server side.<br/>
+        If the requested resource is available then it will return that static file as response.<br/>
+        If it is not available ,then web server sends 404 status code saying RequestResource is not
+        available.<br/>
+        To serve static file, no processing is required at server side .Hence webserver always loves to
+        serve static information.</p>
+
+
+        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+                Web Programming for Dynamic information :
+        </span></div>
+
+<img src="m1l1p2_image2.png" width="90%" height="300px" />
+<p>Client sends a request to the Web server.<br/>
+        Web server checks whether the request is for static or Dynamic information.<br/>
+        If the request is for static information , web server searches for the required Static file.<br/>
+        If it is available it returns that file , other wise it returns 404 status code.<br/>
+        If the request is for Dynamic information web server forwards the request to some Helper
+        Application.<br/>
+        Helper Application analyzes and process the request and generate required dynamic
+        information.<br/>
+        Helper Application forwards that response to the web server and web server forwards that
+        response to the client.</p>
+
+
+
+        <div style="text-align: left; background:#696969; padding:7px;">
+            <span style="font-weight:bold;color:#ffffff">
+                    The following are various possible Helper Applications at Server side.
+            </span></div>
+
+<p>1.Servlet<br/>
+        2.Jsp<br/>
+        3.Asp.net<br/>
+        4.PHP<br/>
+        5.cold fusion<br/>
+        6.CGI<br/>
+        7.server side Java Script.<br/>
+        A servlet is a Server side web component managed by web container for generation of dynamic information.<br/>
+        Web container is the best assistent to the programmer . It maintains entire life cycle of the
+        servlet.<br/>
+        So that programmer has to concentrate only on Business logic.The remaining operations
+        Instantiation of Servlet , Executing life cycle, Destroying the Servlet object and etc, taken care
+        by Web container.
     
-<ul>
-    <li>In ClassicTagModel the tag body can contains scripting elements hence the allowed values for
-            body-content types are empty, tagdependent, scriptless, jsp and default value is jsp.</li>
-    <li>But in SimpleTagModel the tag body should not contains scripting elements hence the allowed
-            values for body-content types are empty, tagdependent, scriptless and default value is scriptless.</li>
-</ul>
-
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Key differences between ClassictagModel and SimpleTagModel :
-</span></div>
-<br/><br/>
-<table>
-    <tr>
-        <th>Property</th>
-        <th>ClassictagModel</th>
-        <th>SimpleTagModel</th>        
-    </tr>
-    <tr>
-        <td><br/>key interfaces<br/></td>
-        <td>Tag(I)<br/>
-                IterationTag(I)<br/>
-                BodyTag(I)</td>
-        <td><br/>SimpleTag(I)<br/></td>        
-    </tr>
-    <tr>
-        <td>supporting<br/>
-                implementation<br/>
-                classes</td>
-        <td>TagSupport(C)<br/>
-                BodyTagSupport(C)</td>
-        <td><br/>SimpleTagSupport(C)</td>        
-    </tr>
-    <tr>
-        <td>key life cycle
-                methods that we
-                have to implement</td>
-        <td>doStartTag()
-                doEndTag()
-                doAfterBody()</td>
-        <td>doTag()</td>        
-    </tr>
-    <tr>
-        <td>how to write
-                response to jsp
-                output stream</td>
-        <td>pageContext(). getOut().println()
-                we should enclose this statement by using try,
-                catch</td>
-        <td>getPageContext().
-                getOut().println()
-                it is not required enclose try,
-                catch</td>        
-    </tr>
-      <tr>
-        <td>how to access jsp
-                implicit objects and
-                attributes</td>
-        <td>by using PageContext
-                pageContext.getOut();</td>
-        <td>by using JspContext</td>        
-    </tr>
-      <tr>
-        <td>how to include tag
-                body in the result</td>
-        <td>in the case of Tag, IterationTag interfaces
-                doStartTag() should return
-                EVAL_BODY_INCLUDE but in BodyTag interface
-                doStartTag() should return
-                EVAL_BODY_BUFFERED</td>
-        <td>getJspBody().invoke(null);</td>        
-    </tr>
-      <tr>
-        <td>how to stop current
-                jsp execution</td>
-        <td>doEndTag() should return SKIP_PAGE</td>
-        <td>in side doTag() we should
-                throw SkipPageException</td>        
-    </tr>
-</table>
-
-
-
-
+    </p>
 
 
 
