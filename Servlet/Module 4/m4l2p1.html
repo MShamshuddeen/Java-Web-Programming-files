@@ -245,33 +245,77 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
+    <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+            Cookies :
+</span></div>
+<br/>
+<img src="m4l2p1_image1.png" width="100%" height="200px"/>
+<p>1. Cookie is a small amount of information (key , value) pair.<br/>
+		2. Whenever client sends a request to the Server , if any information required to
+		remember for future purpose then server creates a Cookie object with that
+		information and send that Cookie back to the client as the part of response . For, this ,
+		server uses set-cookie response header.<br/>
+		3. Whenever client got the response it retrives the cookies send by the Server and stores
+		those cookies in the local file system.<br/>
+		4. Client sendback all the Cookies send by the server with every consecutive request for
+		this client use cookie request header.<br/>
+		5. By accessing those cookies server can able to remember client information across
+		multiple requests.<br/>
+		6. We can create Cookie object by using Cookie class constructor.</p>
 
-        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-                Servlet Technology Model :
-        </span></div>
-<p>1. servlet API and life cycle<br/>
-        2. Http methods<br/>
-        3. HttpServletRequest<br/>
-        4. HttpServletResponse</p>
-
-        <p  style="font-weight:bold;color:#212121">Servlet deffination :
-            <br/>Servlet is a single instance multiple thread based server side Technology
-            to develop Dynamic web resources of web application.</p>
+  <p  style="font-weight:bold;color:#212121">Cookie cookieobject = new Cookie(String key , String value );
+		</p>
+		
+<p>7. After creating the Cookie object we have to add that Cookie to the response by using
+		addCookie( ).</p>
+  <p  style="font-weight:bold;color:#212121">response.addCookie(cookieobject) ;
+		</p>
+		
+<p>8. At server side , we can retrive all cookies send by the client by using getCookies( ).</p>
+<p  style="font-weight:bold;color:#212121">Cookies[ ] cookieobject = request.getCookies( );
+	</p>
+<p>9. If the request doesn't associated with any Cookies then this method returns null.</p>
 
 <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Servlet API :
-</span></div>
+		Important methods of Cookie class :
+	</span></div>
 
-<p>We can develop Servlets by using the following 2 packages.<br/><br/>
-        1. javax.servlet: This package defines several classes and interfaces to develop servlets
-        from scratch irrespective of any protocol.<br/>
-        2. javax.servlet.http : It is the sub package of javax.servlet and contains several
-        convenient classes and interfaces to develop http based servlets.</p>
+	<p  style="font-weight:bold;color:#212121">public String getName()
+		</p>
+		
+<p>This method returns the name of the Cookie.</p>
+
+<p  style="font-weight:bold;color:#212121">public String getValue()
+	</p>
+	
+<p>Returns value of the Cookie.</p>
+
+<p  style="font-weight:bold;color:#212121">
+		public int getMaxAge()
+	</p>
+	
+<p>Returns the maximum age of Cookie in seconds.</p>
+
+<p  style="font-weight:bold;color:#212121">
+		public void setMaxAge(int seconds )
+	</p>
+	
+<p>To set max age of cookie.</p>
+<ul>
+	<li>"+ve" value indicates that cookie will be expires after that how many seconds have passed.</li>
+	<li>Note that the value is max age of the cookie, when the cookie will expires , not the cookie current
+			age.</li>
+	<li>"-ve" value indicates the cookie is not stored permanently and it will be deleted when browser
+			exists/close.</li>
+	<li>"0" value indicates cookies to be deleted.</li>	
+</ul>
 
 
 
 
-    
+
+
+
 
 
 

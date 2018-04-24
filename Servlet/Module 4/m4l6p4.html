@@ -230,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    padding: 4px;
-    font-size: 12px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -246,94 +245,157 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-                Differences between send-Redirection and forward mechanism :
-            </span></div>
+<img src="m4l6p4_image1.png" width="100%" height="200px"/>
 
-<table>
-    <tr>
-        <th>send Re-direct</th>
-        <th>forward</th>
-    </tr>
-    <tr>
-        <td><img src="m1l6p4_image1.png" width="100%" height="200px"/></td>
-        <td><img src="m1l6p4_image2.png" width="100%" height="150px"/></td>        
-    </tr>
-    <tr>
-        <td>This mechanism will work at client side. Hence
-                client aware of which Servlet is providing the
-                required response.</td>
-        <td>This mechanism will work at server side and
-                it is not visible to the client. Hence client is
-                not aware of which Servlet is providing the
-                required response.</td>        
-    </tr>
-     <tr>
-        <td>In this approach an extra trip is required to the
-                client side . Hence network traffic increases &amp;
-                effects the performence of the system.</td>
-        <td>No extra trip is required to the client &amp;
-                hence there are no network traffic &amp;
-                performance problem.</td>        
-    </tr>
-     <tr>
-        <td>This is only possible mechanism to
-                communicate with resoueces which are present
-                outside of web-container.</td>
-        <td>forward mechanism will work with in the
-                web-container only and we can't use this
-                mechanism to communicate with the
-                resources present outside of container.</td>        
-    </tr>
-     <tr>
-        <td>Seperate new request object will be created in
-                send Redirection .</td>
-        <td>Same request object will be forwarded .</td>        
-    </tr>
-    <tr>
-            <td>By using HttpServletResponse object . we can
-                    achieve send redirection.
-                    response.sendRedirect("/test2");</td>
-            <td>By using Request Dispatcher object we can
-                    achieve forward mechanism .
-                    rd.forward(req , res);</td>        
-        </tr>
-         <tr>
-        <td>After commiting the Response we are not allow
-                to perform send Redirection .Otherwise we will
-                get RuntimeException saying
-                IllegalStateException.</td>
-        <td>After Commiting Response , we can't
-                perform forward otherwise
-                IllegalStateException.</td>        
-    </tr>
-</table>
-<br/>
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Adding Cookies to the response :
-    </span></div>
-<p>HttpServletResponse contains the following method to addCookie to the Response object.</p>
-<p  style="font-weight:bold;color:#212121">public void addCookie(Cookie c )
-    </p>
-
-      <p  style="font-weight:bold;color:#212121">Example:
+    <h3>Listener</h3>
+    <p  style="font-weight:bold;color:#212121">
+1. ServletRequestListener
         </p>
+        <p><b>Purpose</b></p>
+        <p>To listens life cycle events of request object. i.e., request object creation &amp; destruction</p>
+        <p><b>Corresponding Methods</b></p>
+        <p>requestInitialized()<br/>
+                requestDestroyed()</p>
+        <p><b>Corresponding Events</b></p>
+        <p>ServletRequestEvent</p>
+        <p><b>Corresponding Event Methods</b></p>
+        <p>getServletRequest()<br/>
+                getServletContext()</p>
+        <p><b>Is required to configure web.xml</b></p>
+        <p>Yes</p>
 
-<p>Cookie c=new Cookie(String name , String value) ;<br/>
-        response.addCookie(c);</p>
 
-        <p  style="font-weight:bold;color:#212121">Note:
-            </p>
-    
-<p>1. We can use redirection to communicate either with in the same server or outside the
-        server. But recommended to use communicate outside.<br/>
-        2. forward mechanism is applicable to communicate only with in the same server . But
-        outside of server we can't use.<br/>
-        3. To communicate with in the same server we can use either forward or send
-        redirection but recommended to use forward.</p>
+         <p  style="font-weight:bold;color:#212121">
+2. ServletRequestAttributeListener
+        </p>
+        <p><b>Purpose</b></p>
+        <p>To listens events related request scoped attributes</p>
+        <p><b>Corresponding Methods</b></p>
+        <p>attributeAdded()<br/>
+                attributeReplaced()<br/>
+                attributeRemoved()</p>
+        <p><b>Corresponding Events</b></p>
+        <p>ServletRequest<br/>
+                AttributeEvent</p>
+        <p><b>Corresponding Event Methods</b></p>
+        <p>getName()<br/>
+                getValue()</p>
+        <p><b>Is required to configure web.xml</b></p>
+        <p>Yes</p>
 
 
-<img src="m1l6p4_image3.png" width="100%" height="450px"/>
+                 <p  style="font-weight:bold;color:#212121">
+3. ServletContextListener
+        </p>
+        <p><b>Purpose</b></p>
+        <p>To listens life cycle events of context object. i.e., context object creation &amp; destruction</p>
+        <p><b>Corresponding Methods</b></p>
+        <p>contextInitialized()<br/>
+                contextDestroyed()</p>
+        <p><b>Corresponding Events</b></p>
+        <p>ServletContextEvent</p>
+        <p><b>Corresponding Event Methods</b></p>
+        <p>getServletContext()</p>
+        <p><b>Is required to configure web.xml</b></p>
+        <p>Yes</p>
+
+
+                         <p  style="font-weight:bold;color:#212121">
+4. ServletContextAttributeListener
+        </p>
+        <p><b>Purpose</b></p>
+        <p>To listen events related to context scoped attributes</p>
+        <p><b>Corresponding Methods</b></p>
+        <p>attributeAdded()<br/>
+                attributeReplaced()<br/>
+                attributeRemoved()</p>
+        <p><b>Corresponding Events</b></p>
+        <p>ServletContext<br/>
+                AttributeEvent</p>
+        <p><b>Corresponding Event Methods</b></p>
+        <p>getName()<br/>
+                getValue()</p>
+        <p><b>Is required to configure web.xml</b></p>
+        <p>Yes</p>
+
+             <p  style="font-weight:bold;color:#212121">
+5. HttpSessionListener
+        </p>
+        <p><b>Purpose</b></p>
+        <p>To listens life cycle events of session object. i.e., session object creation &amp; destruction</p>
+        <p><b>Corresponding Methods</b></p>
+        <p>sessionCreated()<br/>
+                sessionDestroyed()</p>
+        <p><b>Corresponding Events</b></p>
+        <p>HttpSessionEvent</p>
+        <p><b>Corresponding Event Methods</b></p>
+        <p>getSession()</p>
+        <p><b>Is required to configure web.xml</b></p>
+        <p>Yes</p>
+
+        <p  style="font-weight:bold;color:#212121">
+6. HttpSessionAttributeListener
+        </p>
+        <p><b>Purpose</b></p>
+        <p>To listen events related to session scoped attributes</p>
+        <p><b>Corresponding Methods</b></p>
+        <p>attributeAdded()<br/>
+                attributeReplaced()<br/>
+                attributeRemoved()</p>
+        <p><b>Corresponding Events</b></p>
+        <p> HttpSession<br/>
+                BindingEvent</p>
+        <p><b>Corresponding Event Methods</b></p>
+        <p>getName()<br/>
+                getValue()</p>
+        <p><b>Is required to configure web.xml</b></p>
+        <p>Yes</p>
+
+    <p  style="font-weight:bold;color:#212121">
+7. HttpSessionBindingListener
+        </p>
+        <p><b>Purpose</b></p>
+        <p>When ever we are adding or removing or replacing a perticular type of object in session scope ,to perform certain activity then we should go for this Listener</p>
+        <p><b>Corresponding Methods</b></p>
+        <p>valueBound()<br/>
+                valueUnbound()</p>
+        <p><b>Corresponding Events</b></p>
+        <p>HttpSession<br/>
+                BindingEvent</p>
+        <p><b>Corresponding Event Methods</b></p>
+        <p>getName()<br/>
+                getValue()</p>
+        <p><b>Is required to configure web.xml</b></p>
+        <p>not required</p>
+
+
+    <p  style="font-weight:bold;color:#212121">
+8. HttpSessionActivationListener
+        </p>
+        <p><b>Purpose</b></p>
+        <p>If we want to perform any
+                activity just
+                before
+                serialization
+                and just after
+                de-serialization
+                in distributed
+                webapplications</p>
+        <p><b>Corresponding Methods</b></p>
+        <p>sessionWillPassivate()<br/>
+                sessionDidActivate()</p>
+        <p><b>Corresponding Events</b></p>
+        <p>HttpSessionEvent</p>
+        <p><b>Corresponding Event Methods</b></p>
+        <p>getSession()</p>
+        <p><b>Is required to configure web.xml</b></p>
+        <p>not required</p>
+
+
+
+
+       
+       
 
 
 

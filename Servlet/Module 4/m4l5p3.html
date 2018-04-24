@@ -230,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    padding: 4px;
-    font-size: 12px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -246,94 +245,180 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-                Differences between send-Redirection and forward mechanism :
-            </span></div>
-
-<table>
-    <tr>
-        <th>send Re-direct</th>
-        <th>forward</th>
-    </tr>
-    <tr>
-        <td><img src="m1l6p4_image1.png" width="100%" height="200px"/></td>
-        <td><img src="m1l6p4_image2.png" width="100%" height="150px"/></td>        
-    </tr>
-    <tr>
-        <td>This mechanism will work at client side. Hence
-                client aware of which Servlet is providing the
-                required response.</td>
-        <td>This mechanism will work at server side and
-                it is not visible to the client. Hence client is
-                not aware of which Servlet is providing the
-                required response.</td>        
-    </tr>
-     <tr>
-        <td>In this approach an extra trip is required to the
-                client side . Hence network traffic increases &amp;
-                effects the performence of the system.</td>
-        <td>No extra trip is required to the client &amp;
-                hence there are no network traffic &amp;
-                performance problem.</td>        
-    </tr>
-     <tr>
-        <td>This is only possible mechanism to
-                communicate with resoueces which are present
-                outside of web-container.</td>
-        <td>forward mechanism will work with in the
-                web-container only and we can't use this
-                mechanism to communicate with the
-                resources present outside of container.</td>        
-    </tr>
-     <tr>
-        <td>Seperate new request object will be created in
-                send Redirection .</td>
-        <td>Same request object will be forwarded .</td>        
-    </tr>
-    <tr>
-            <td>By using HttpServletResponse object . we can
-                    achieve send redirection.
-                    response.sendRedirect("/test2");</td>
-            <td>By using Request Dispatcher object we can
-                    achieve forward mechanism .
-                    rd.forward(req , res);</td>        
-        </tr>
-         <tr>
-        <td>After commiting the Response we are not allow
-                to perform send Redirection .Otherwise we will
-                get RuntimeException saying
-                IllegalStateException.</td>
-        <td>After Commiting Response , we can't
-                perform forward otherwise
-                IllegalStateException.</td>        
-    </tr>
-</table>
-<br/>
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Adding Cookies to the response :
+ <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+        ServletRequestAttributeListener
     </span></div>
-<p>HttpServletResponse contains the following method to addCookie to the Response object.</p>
-<p  style="font-weight:bold;color:#212121">public void addCookie(Cookie c )
-    </p>
 
-      <p  style="font-weight:bold;color:#212121">Example:
+<p>This Listener listens to events related to request scoped attributes like attribute addition, attribute
+        removel, attribute replacement.<br/><br/>
+        This interface defines following methods<br/><br/>
+        1. public void attributeAdded(ServletRequestAttributeEvent e)<br/>
+        This method will be executed automatically by the by the WC, when ever we are adding an
+        attribute an request scope.<br/>
+        2. public void attributeRemovel(ServletRequestAttributeEvent e)<br/>
+        This method will be executed automatically by the by the WC, when ever we are removing an
+        attribute from request scope.<br/>
+        3. public void attributeReplaced(ServletRequestAttributeEvent e)<br/>
+        This method will be executed automatically by the by the WC, when ever we are replacing an
+        existing attribute named with new value. This method returns old value, but not new value.</p>
+
+
+  <p  style="font-weight:bold;color:#212121">
+        ServletRequestAttributeEvent
         </p>
 
-<p>Cookie c=new Cookie(String name , String value) ;<br/>
-        response.addCookie(c);</p>
+<p>It is the child class of ServletRequestEvent, this class defines the following 2 methods</p>
+<p  style="font-weight:bold;color:#212121">
+        1. public String getName()
+    </p>
+<p>It returns name of the attribute which is adding request scope.</p>
 
-        <p  style="font-weight:bold;color:#212121">Note:
+
+  <p  style="font-weight:bold;color:#212121">
+        2. public Object getValue()
+        </p>
+<p>It returns the value of attribute which is added or removed , In this case of replacement this
+        method returns old value.</p>
+
+        <p  style="font-weight:bold;color:#212121">
+                ServletRequestAttributeListenerDemo.java
             </p>
+<pre ><code class="language-java">public class ServletRequestAttributeListenerDemo implements ServletRequestAttributeListener {
+public ServletRequestAttributeListenerDemo() {
+System.out.println("ServletRequestAttributeListenerDemo obj created ");
+}
+public void attributeAdded(ServletRequestAttributeEvent event) {
+System.out.println("Attribute added name :"+event.getName());
+System.out.println("Attribute added value :"+event.getValue());
+}
+public void attributeRemoved(ServletRequestAttributeEvent event) {
+System.out.println("Attribute removed name :"+event.getName());
+System.out.println("Attribute removed value :"+event.getValue());
+}
+public void attributeReplaced(ServletRequestAttributeEvent event) {
+System.out.println("Attribute replaced name :"+event.getName());
+System.out.println("Attribute replaced value :"+event.getValue());
+}
+}</code></pre>
+<p  style="font-weight:bold;color:#212121">
+        ServletRequestAttribute.java
+    </p>
+
+<pre ><code class="language-java">public class ServletRequestAttribute extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+response.setContentType("text/html");
+//PrintWriter out = response.getWriter();
+request.setAttribute("Ashok", "SCJP");
+request.setAttribute("Ashok", "SCWCD");
+request.removeAttribute("Ashok");
+}
+}</code></pre>
+
+<pre ><code class="language-java">&lt;listener>
+&lt;listener-class>listener.ServletRequestAttributeListenerDemo&lt;/listener-class>
+&lt;/listener>
+&lt;servlet>
+&lt;servlet-name>ServletRequestAttribute&lt;/servlet-name>
+&lt;servlet-class>listener.ServletRequestAttribute&lt;/servlet-class>
+&lt;/servlet>
+&lt;servlet-mapping>
+&lt;servlet-name>ServletRequestAttribute&lt;/servlet-name>
+&lt;url-pattern>/requestattribute&lt;/url-pattern>
+&lt;/servlet-mapping></code></pre>
+
+<h3>ContextListener:</h3>
+<p  style="font-weight:bold;color:#212121">
+        ServletContextListener
+    </p>
+<p>
+        This Listener listens life cycle events of context object like creation &amp; destruction. This Listener defines
+        the following 2 methods<br/><br/>
+        &nbsp;&nbsp;1. public void contextInitialized(ServletContextEvent e)
+        This method will be executed at the time of context object created or application deployment.<br/>
+        &nbsp;&nbsp;2. public void contextDestroyed(ServletContextEvent e)
+        This method will be executed at the time of context object destruction. i.e., at the time of
+        application un-deployment.
+</p>
+
+<p  style="font-weight:bold;color:#212121">
+        ServletContextEvent:
+    </p>
+<p>It is the child class java.util.EventOject and it contains only one method public ServletContext
+        getServletContext().</p>
+
+<p  style="font-weight:bold;color:#212121">
+        Demo program to ContextListener to print hitcount of the web-application which should persist across
+        server shutdown.<br/><br/>ServletRequestListenerDemo.java
+    </p>
+
+    <pre ><code class="language-java">public class ServletContextListenerDemo implements ServletContextListener {
+public void contextDestroyed(ServletContextEvent event) {
+System.out.println("context destroyed ");
+String path = event.getServletContext().getRealPath("abc.txt");
+try {
+PrintWriter out=new PrintWriter(path);
+out.print(ServletRequestListenerDemo.count);
+out.flush();
+} catch (Exception e) {}
+}
+public void contextInitialized(ServletContextEvent event) {
+System.out.println("context initialized ");
+String path = event.getServletContext().getRealPath("abc.txt");
+try {
+BufferedReader br = new BufferedReader(new FileReader(path));
+String s = br.readLine();
+if(s != null) {
+int c = Integer.parseInt(s);
+ServletRequestListenerDemo.count = c;
+}
+}catch (Exception e) {}
+}
+}</code></pre>
+
+<p  style="font-weight:bold;color:#212121">
+        ServletContext.java
+    </p>
+
+<pre ><code class="language-java">public class ServletContext extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+response.setContentType("text/html");
+PrintWriter out = response.getWriter();
+out.println("Hitcount persist acoss server shutdown
+in Servlet context listener :"+ServletRequestListenerDemo.count);
+}
+}</code></pre>
+
+<p  style="font-weight:bold;color:#212121">
+        web.xml
+    </p>
+
+<pre ><code class="language-java">&lt;listener>
+&lt;listener-class>listener.ServletContextListenerDemo&lt;/listener-class>
+&lt;/listener>
+&lt;servlet>
+&lt;servlet-name>ServletContext&lt;/servlet-name>
+&lt;servlet-class>listener.ServletContext&lt;/servlet-class>
+&lt;/servlet>
+&lt;servlet-mapping>
+&lt;servlet-name>ServletContext&lt;/servlet-name>
+&lt;url-pattern>/context&lt;/url-pattern>
+&lt;/servlet-mapping>
+&lt;listener>
+&lt;listener-class>listener.ServletRequestListenerDemo&lt;/listener-class>
+&lt;/listener></code></pre>
+
+
+<ul>
+    <li>We can configure more than one listener of the same type but the order of the execution is
+            based on the order of Listener tag in the web.xml</li>
+    <li>If both listeners are 2 different types the order is not important.</li>
     
-<p>1. We can use redirection to communicate either with in the same server or outside the
-        server. But recommended to use communicate outside.<br/>
-        2. forward mechanism is applicable to communicate only with in the same server . But
-        outside of server we can't use.<br/>
-        3. To communicate with in the same server we can use either forward or send
-        redirection but recommended to use forward.</p>
+</ul>
 
 
-<img src="m1l6p4_image3.png" width="100%" height="450px"/>
+        
+
 
 
 

@@ -230,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    padding: 4px;
-    font-size: 12px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -246,96 +245,44 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-                Differences between send-Redirection and forward mechanism :
-            </span></div>
 
-<table>
-    <tr>
-        <th>send Re-direct</th>
-        <th>forward</th>
-    </tr>
-    <tr>
-        <td><img src="m1l6p4_image1.png" width="100%" height="200px"/></td>
-        <td><img src="m1l6p4_image2.png" width="100%" height="150px"/></td>        
-    </tr>
-    <tr>
-        <td>This mechanism will work at client side. Hence
-                client aware of which Servlet is providing the
-                required response.</td>
-        <td>This mechanism will work at server side and
-                it is not visible to the client. Hence client is
-                not aware of which Servlet is providing the
-                required response.</td>        
-    </tr>
-     <tr>
-        <td>In this approach an extra trip is required to the
-                client side . Hence network traffic increases &amp;
-                effects the performence of the system.</td>
-        <td>No extra trip is required to the client &amp;
-                hence there are no network traffic &amp;
-                performance problem.</td>        
-    </tr>
-     <tr>
-        <td>This is only possible mechanism to
-                communicate with resoueces which are present
-                outside of web-container.</td>
-        <td>forward mechanism will work with in the
-                web-container only and we can't use this
-                mechanism to communicate with the
-                resources present outside of container.</td>        
-    </tr>
-     <tr>
-        <td>Seperate new request object will be created in
-                send Redirection .</td>
-        <td>Same request object will be forwarded .</td>        
-    </tr>
-    <tr>
-            <td>By using HttpServletResponse object . we can
-                    achieve send redirection.
-                    response.sendRedirect("/test2");</td>
-            <td>By using Request Dispatcher object we can
-                    achieve forward mechanism .
-                    rd.forward(req , res);</td>        
-        </tr>
-         <tr>
-        <td>After commiting the Response we are not allow
-                to perform send Redirection .Otherwise we will
-                get RuntimeException saying
-                IllegalStateException.</td>
-        <td>After Commiting Response , we can't
-                perform forward otherwise
-                IllegalStateException.</td>        
-    </tr>
-</table>
-<br/>
-<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Adding Cookies to the response :
-    </span></div>
-<p>HttpServletResponse contains the following method to addCookie to the Response object.</p>
-<p  style="font-weight:bold;color:#212121">public void addCookie(Cookie c )
-    </p>
-
-      <p  style="font-weight:bold;color:#212121">Example:
+<p  style="font-weight:bold;color:#212121">Exchanging Session Id between Client and Server :
         </p>
 
-<p>Cookie c=new Cookie(String name , String value) ;<br/>
-        response.addCookie(c);</p>
+<p>1. Whenever Client sends 1st request to the Sever , If any request information is required
+        to remember for the future purpose then server creates a Session object and score the
+        required information in the form of Session scopped attributes.<br/>
+        2. Server sends corresponding session id to the client as the part of 1st response.For this
+        server uses "set-cookie" response header.<br/>
+        3. Whenever client got the response , it retrives the session id and stored in the local file
+        System.<br/>
+        4. With every consecutive request client send back the corresponding Session id to the
+        server, for this client uses "cookie" request header.<br/>
+        5. By accessing Session id and corresponding Session object Server can able to remember
+        client information across multiple requests.<br/>
+        6. By using set-cookie response header and cookie request header session id will be
+        exchanged between client and server.</p>
 
-        <p  style="font-weight:bold;color:#212121">Note:
-            </p>
-    
-<p>1. We can use redirection to communicate either with in the same server or outside the
-        server. But recommended to use communicate outside.<br/>
-        2. forward mechanism is applicable to communicate only with in the same server . But
-        outside of server we can't use.<br/>
-        3. To communicate with in the same server we can use either forward or send
-        redirection but recommended to use forward.</p>
+<img src="m4l1p4_image1.png" width="100%" height="200px"/>
 
-
-<img src="m1l6p4_image3.png" width="100%" height="450px"/>
-
-
+<p>Session id will be stored as per application in the client side.</p>
+<table>
+    <tr>
+        <td>header</td>
+        <td>value</td>
+    </tr>
+     <tr>
+        <td>cookie</td>
+        <td>sid</td>
+    </tr>
+</table>
+<p>Ex: Note:(Bank locker ):</p>
+<p>1. If the required Session information is very less than creating a separate Session object
+        and maintaining that object at Server side is not recommended because it impacts
+        performense of the System.<br/>
+        2. To resolve this, we should go for cookie Session management mechanism , where
+        required Session information is maintained at client side and Server is not responsible
+        to maintain any Session information.</p>
 
 
 

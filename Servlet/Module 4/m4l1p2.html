@@ -230,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    padding: 4px;
-    font-size: 12px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -246,94 +245,106 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-                Differences between send-Redirection and forward mechanism :
-            </span></div>
-
-<table>
-    <tr>
-        <th>send Re-direct</th>
-        <th>forward</th>
-    </tr>
-    <tr>
-        <td><img src="m1l6p4_image1.png" width="100%" height="200px"/></td>
-        <td><img src="m1l6p4_image2.png" width="100%" height="150px"/></td>        
-    </tr>
-    <tr>
-        <td>This mechanism will work at client side. Hence
-                client aware of which Servlet is providing the
-                required response.</td>
-        <td>This mechanism will work at server side and
-                it is not visible to the client. Hence client is
-                not aware of which Servlet is providing the
-                required response.</td>        
-    </tr>
-     <tr>
-        <td>In this approach an extra trip is required to the
-                client side . Hence network traffic increases &amp;
-                effects the performence of the system.</td>
-        <td>No extra trip is required to the client &amp;
-                hence there are no network traffic &amp;
-                performance problem.</td>        
-    </tr>
-     <tr>
-        <td>This is only possible mechanism to
-                communicate with resoueces which are present
-                outside of web-container.</td>
-        <td>forward mechanism will work with in the
-                web-container only and we can't use this
-                mechanism to communicate with the
-                resources present outside of container.</td>        
-    </tr>
-     <tr>
-        <td>Seperate new request object will be created in
-                send Redirection .</td>
-        <td>Same request object will be forwarded .</td>        
-    </tr>
-    <tr>
-            <td>By using HttpServletResponse object . we can
-                    achieve send redirection.
-                    response.sendRedirect("/test2");</td>
-            <td>By using Request Dispatcher object we can
-                    achieve forward mechanism .
-                    rd.forward(req , res);</td>        
-        </tr>
-         <tr>
-        <td>After commiting the Response we are not allow
-                to perform send Redirection .Otherwise we will
-                get RuntimeException saying
-                IllegalStateException.</td>
-        <td>After Commiting Response , we can't
-                perform forward otherwise
-                IllegalStateException.</td>        
-    </tr>
-</table>
-<br/>
 <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Adding Cookies to the response :
-    </span></div>
-<p>HttpServletResponse contains the following method to addCookie to the Response object.</p>
-<p  style="font-weight:bold;color:#212121">public void addCookie(Cookie c )
+        Invalidating a Session :
+</span></div>
+<p>We can invalidate a Session by using the following 2 ways<br/><br/>
+        1. By invalidate method<br/>
+        2. By timeout mechanism</p>
+
+  <p  style="font-weight:bold;color:#212121">1.invalidate( ) :
+        </p>
+<p>HttpSession interface contains invalidate( ) to invalidate a Session explicitly.</p>
+<p  style="font-weight:bold;color:#212121">public void invalidate( )
+    </p>
+<p>When ever we click logout button , internally this method will be executed.<br/>Ex: session.invalidate( )</p>
+
+<p  style="font-weight:bold;color:#212121">LogoutServlet.java
     </p>
 
-      <p  style="font-weight:bold;color:#212121">Example:
+<pre ><code class="language-java">public class LogoutServlet extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+response.setContentType("text/html");
+PrintWriter out = response.getWriter();
+HttpSession session=request.getSession(false);
+if(session != null)
+session.invalidate();
+else
+out.println("No session is invalidate()");
+}
+}</code></pre>
+
+<p  style="font-weight:bold;color:#212121">web.xml
+    </p>
+
+<pre ><code class="language-java">&lt;servlet>
+&lt;servlet-name>LogoutServlet&lt;/servlet-name>
+&lt;servlet-class>session.LogoutServlet&lt;/servlet-class>
+&lt;/servlet>
+&lt;servlet-mapping>
+&lt;servlet-name>LogoutServlet&lt;/servlet-name>
+&lt;url-pattern>/logout&lt;/url-pattern>
+&lt;/servlet-mapping></code></pre>
+
+<p  style="font-weight:bold;color:#212121">2.By Session timeout mechanism :
+    </p>
+
+<p>1. If we are not performing any operation for a predefined amount of time on the
+        session object, then session will be expired automatically<br/>
+        2. This pre-defind amount of time is called "Session time out ".<br/>
+        3. We can configure Session time out at Server level or a particular web-application level
+        or for a particular Session object level.</p>
+
+
+  <p  style="font-weight:bold;color:#212121">Automatic Support from the WebServer :
+        </p>
+<p>Most of the Web-Servers provide default support for Session time out mostly it is 30
+        minutes. We can customize this value based on our requirement. This Session timeout
+        is application for all sessions , Which are created in that Server irrespective of
+        application.</p>
+
+  <p  style="font-weight:bold;color:#212121">Configuring Session timeout at application level :
         </p>
 
-<p>Cookie c=new Cookie(String name , String value) ;<br/>
-        response.addCookie(c);</p>
+<p>1. We can configure Session timeout for entire web-application in web.xml as
+        follows</p>
+<pre ><code class="language-java">&lt;web-app>
+&lt;session-config>
+&lt;session-timeout> 10 &lt;/session-timeout>
+&lt;/session-config>
+&lt;/web-app></code></pre>
 
-        <p  style="font-weight:bold;color:#212121">Note:
-            </p>
-    
-<p>1. We can use redirection to communicate either with in the same server or outside the
-        server. But recommended to use communicate outside.<br/>
-        2. forward mechanism is applicable to communicate only with in the same server . But
-        outside of server we can't use.<br/>
-        3. To communicate with in the same server we can use either forward or send
-        redirection but recommended to use forward.</p>
+<p>2. The session-config is direct child tag of web-app .Hence we can take any where
+        with in web-app<br/>
+        3. The unit to the session timeout is in minutes.<br/>
+        4. Zero (or) negative value indicates that session never expires.(untill we click the
+        logout button)<br/>
+        5. This session timeout value is applicable for all sessions , which are created as
+        part of web application.</p>
+
+<p  style="font-weight:bold;color:#212121">Configuring Session timeout for a particular Session object :
+        </p>
+
+<p>6. We can set the Session timeout by using setMaxInactiveInterval( ) method for
+        a perticular Session object.</p>
+
+<p  style="font-weight:bold;color:#212121">public void setMaxInactiveInterval(int seconds)
+        </p>
+
+<p>7. Ex: session.setMaxInactiveInterval(120);<br/>
+    8. The argument is in seconds, -ve value indicates session never expires, Zero
+    value indicates session expires immediately .<br/>
+    9. This session time out is applicable only for a particular session object on which
+    this method has called.</p>
 
 
-<img src="m1l6p4_image3.png" width="100%" height="450px"/>
+
+
+
+
+
+
 
 
 

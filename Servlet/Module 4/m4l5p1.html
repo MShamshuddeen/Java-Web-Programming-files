@@ -230,8 +230,7 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    padding: 4px;
-    font-size: 12px;
+    padding: 8px;
 }
 
 tr:nth-child(even) {
@@ -246,94 +245,126 @@ tr:nth-child(even) {
 <div class="card">
  
   <div class="container">
-        <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-                Differences between send-Redirection and forward mechanism :
-            </span></div>
-
-<table>
-    <tr>
-        <th>send Re-direct</th>
-        <th>forward</th>
-    </tr>
-    <tr>
-        <td><img src="m1l6p4_image1.png" width="100%" height="200px"/></td>
-        <td><img src="m1l6p4_image2.png" width="100%" height="150px"/></td>        
-    </tr>
-    <tr>
-        <td>This mechanism will work at client side. Hence
-                client aware of which Servlet is providing the
-                required response.</td>
-        <td>This mechanism will work at server side and
-                it is not visible to the client. Hence client is
-                not aware of which Servlet is providing the
-                required response.</td>        
-    </tr>
-     <tr>
-        <td>In this approach an extra trip is required to the
-                client side . Hence network traffic increases &amp;
-                effects the performence of the system.</td>
-        <td>No extra trip is required to the client &amp;
-                hence there are no network traffic &amp;
-                performance problem.</td>        
-    </tr>
-     <tr>
-        <td>This is only possible mechanism to
-                communicate with resoueces which are present
-                outside of web-container.</td>
-        <td>forward mechanism will work with in the
-                web-container only and we can't use this
-                mechanism to communicate with the
-                resources present outside of container.</td>        
-    </tr>
-     <tr>
-        <td>Seperate new request object will be created in
-                send Redirection .</td>
-        <td>Same request object will be forwarded .</td>        
-    </tr>
-    <tr>
-            <td>By using HttpServletResponse object . we can
-                    achieve send redirection.
-                    response.sendRedirect("/test2");</td>
-            <td>By using Request Dispatcher object we can
-                    achieve forward mechanism .
-                    rd.forward(req , res);</td>        
-        </tr>
-         <tr>
-        <td>After commiting the Response we are not allow
-                to perform send Redirection .Otherwise we will
-                get RuntimeException saying
-                IllegalStateException.</td>
-        <td>After Commiting Response , we can't
-                perform forward otherwise
-                IllegalStateException.</td>        
-    </tr>
-</table>
-<br/>
 <div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
-        Adding Cookies to the response :
-    </span></div>
-<p>HttpServletResponse contains the following method to addCookie to the Response object.</p>
-<p  style="font-weight:bold;color:#212121">public void addCookie(Cookie c )
+        Listeners
+</span></div>
+<p  style="font-weight:bold;color:#212121">Objective :
     </p>
 
-      <p  style="font-weight:bold;color:#212121">Example:
-        </p>
-
-<p>Cookie c=new Cookie(String name , String value) ;<br/>
-        response.addCookie(c);</p>
-
-        <p  style="font-weight:bold;color:#212121">Note:
-            </p>
+<ul>
+    <li>Describe the web-container event life cycle model for the request, Session and
+            webapplication(context).</li>
+    <li>Create and configure Listener class for each Scope.</li>
+    <li>Create and configure attribute Listeners for each scope.</li>
+    <li>For the given scenario identify proper attribute Listener.</li>
+    <li>In the webapplication there may be a chance of occuring several events like ...
+        <ol>
+            <li>Request object creation/destruction</li>
+            <li>Session object creation/destruction</li>
+            <li>Context object creation/destruction</li>
+            <li>Attribute addition in request/session Scope</li>
+            <li>Removal of attribute in request/session Scope</li>
+            
+        </ol>
+    </li>
+    <li>We can configure Listeners classes to listen these events and they can do appropriate things
+            whenever that event occurs.</li>
     
-<p>1. We can use redirection to communicate either with in the same server or outside the
-        server. But recommended to use communicate outside.<br/>
-        2. forward mechanism is applicable to communicate only with in the same server . But
-        outside of server we can't use.<br/>
-        3. To communicate with in the same server we can use either forward or send
-        redirection but recommended to use forward.</p>
+</ul>
+<p>When ever a particular event occurs if we want to perform certain operation then we should go for
+        Listeners.</p>
+
+<div style="text-align: left; background:#696969; padding:7px;"><span style="font-weight:bold;color:#ffffff">
+        All the Listeners are divided into 3 groups.
+</span></div>
 
 
-<img src="m1l6p4_image3.png" width="100%" height="450px"/>
+<p  style="font-weight:bold;color:#212121">
+	1) RequestListeners :
+</p>
+<ul>
+	<li>These Listen the events related to request.</li>
+	<li>There are 2 types of RequestListeners.
+		<ul>
+			<li>ServletRequestListener</li>
+			<li>ServletRequestAttributeListener</li>			
+		</ul>
+	</li>
+</ul>
+<p  style="font-weight:bold;color:#212121">
+	2) Session Listeners :
+</p>
+
+<ul>
+	<li>Listens the events related to Sessions.</li>
+	<li>There are 4 types of Session Listeners.
+		<ul>
+			<li>HttpSessionListener</li>
+			<li>HttpSessionAttributeListener</li>
+			<li>HttpSessionBindingListener</li>
+			<li>HttpSessionActivationListener</li>
+			
+		</ul>
+	</li>	
+</ul>
+<p  style="font-weight:bold;color:#212121">
+	3) ContextListener :
+</p>
+<ul>
+	<li>Listens the events related to context.</li>
+	<li>There are 2 types of context Listeners.
+		<ul>
+			<li>ServletContextListener</li>
+			<li>ServletContextAttributeListener</li>
+			
+		</ul>
+	</li>
+	
+</ul>
+
+<p class="tip2"><span style="font-weight:bold;color:#212121">Note:</span><br/>
+	java.util.EventListener is the super interface for all the Listeners in our servlets.
+	This Listener doesn't contain any method and acts as marker interface.            
+</p>
+
+
+<img src="m4l5p1_image1.png" width="100%" height="250px"/>
+
+<p  style="font-weight:bold;color:#212121">
+	RequestListeners :
+</p>
+
+<p>ServletRequestListener</p>
+
+<img src="m4l5p1_image2.png" width="100%" height="120px"/>
+
+
+<p>This Listener life cycle events of request object like request object creation and destruction.<br/><br/>
+	This interface defines 2 methods</p>
+
+	<p  style="font-weight:bold;color:#212121">
+		public void requestInitialized(ServletRequestEvent e)
+	</p>
+
+<p>This method will be executed automatically by the WebContainer, at the time of request object
+	creation, i.e., just before executing service()</p>
+
+	<p  style="font-weight:bold;color:#212121">
+		public void requestDestroyed(ServletRequestEvent e)
+	</p>
+
+<p>This method will be executed automatically by the WebContainer at the time of request object
+	destruction, i.e., just after completing service().</p>
+
+	<p  style="font-weight:bold;color:#212121">
+		ServletRequestEvent(C) :
+	</p>
+
+<img src="m4l5p1_image3.png" width="100%" height="120px"/>
+
+<p>It defines the following 2 methods<br/><br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. public ServletRequest getServletRequest()<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. public ServletContext getServletContext()</p>
 
 
 
